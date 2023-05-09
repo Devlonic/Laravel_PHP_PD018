@@ -1,10 +1,11 @@
 export interface ICategoryCreate {
-    name: string,
-    image: File|null,
-    description: string
+  name: string;
+  image: File | null;
+  description: string;
 }
 
 export interface ICategoryCreateErrror {
-    name: string,
-    description: string
+  name: string;
+  description: string;
+  image: string;
 }

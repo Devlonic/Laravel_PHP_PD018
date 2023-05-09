@@ -27,11 +27,15 @@ class CategoryController extends Controller
         $input = $request->all();
         $messages = array(
             'name.required' => 'Вкажіть назву категорії!',
-            'description.required' => 'Вкажіть опис категорії!'
+            'description.required' => 'Вкажіть опис категорії!',
+            'image.required' => 'Choose the category thumb!',
+            'image.image' => 'This file must be image type!',
+            'image.max' => 'This size of this image must be less than 5MB!',
         );
         $validator = Validator::make($input, [
             'name' => 'required',
-            'description' => 'required'
+            'description' => 'required',
+            'image' => 'required|image|max:5000',
         ], $messages);
         if($validator->fails()){
             return response()->json($validator->errors(), 400);

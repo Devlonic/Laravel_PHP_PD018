@@ -11,12 +11,13 @@ const CategoryCreatePage = () => {
   const [dto, setDto] = useState<ICategoryCreate>({
     name: "",
     description: "",
-    image: null
+    image: null,
   });
 
   const [errors, setErrors] = useState<ICategoryCreateErrror>({
     name: "",
     description: "",
+    image: "",
   });
 
   const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -25,7 +26,7 @@ const CategoryCreatePage = () => {
 
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setErrors({ name: "", description: "" });
+    setErrors({ name: "", description: "", image: "" });
     axios
       .post(`${APP_ENV.BASE_URL}api/category`, dto, {
         headers: {
@@ -93,11 +94,16 @@ const CategoryCreatePage = () => {
           </label>
           <input
             type="file"
-            className="form-control"
+            className={classNames("form-control", {
+              "is-invalid": errors.image,
+            })}
             id="image"
             name="image"
             onChange={onImageChangeHandler}
           />
+          {errors.image && (
+            <div className="invalid-feedback">{errors.image}</div>
+          )}
         </div>
 
         <button type="submit" className="btn btn-primary">

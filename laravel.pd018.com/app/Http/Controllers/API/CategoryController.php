@@ -7,6 +7,8 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Validator;
 use Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class CategoryController extends Controller
 {
@@ -63,7 +65,8 @@ class CategoryController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $category = DB::table('categories')->find($id);
+        return response()->json($category);
     }
 
     /**
@@ -72,7 +75,37 @@ class CategoryController extends Controller
     public function update(Request $request, string $id)
     {
         $input = $request->all();
-        $category = Category::update($input);
+        $messages = array(
+            'image.image' => 'This file must be image type!',
+            'image.max' => 'This size of this image must be less than 5MB!',
+        );
+        $validator = Validator::make($input, [
+            'image' => 'image|max:5000',
+        ], $messages);
+        if($validator->fails()){
+            return response()->json($validator->errors(), 400);
+        }
+
+        // take old value from database
+        $category = DB::table('categories')->find($id);
+        // if user request to edit image
+        if($request->file('image') != null) {
+            $filename = File::basename(parse_url($category->image, PHP_URL_PATH));
+
+            // delete previous from disk
+            if(Storage::disk('public')->exists('uploads\\'.$filename)) {
+                Storage::disk('public')->delete('uploads\\'.$filename);
+            }
+
+            $file = $request->file('image');
+            $path = Storage::disk('public')->putFile('uploads', $file);
+            $url = Storage::disk('public')->url($path);
+
+            $input["image"] = $url;
+        }
+
+        $category = Category::find($id);
+        $category->update($input);
 
         return response()->json($category);
     }

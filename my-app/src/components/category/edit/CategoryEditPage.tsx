@@ -1,37 +1,61 @@
 import axios from "axios";
 import classNames from "classnames";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { APP_ENV } from "../../../env";
-import { ICategoryCreate, ICategoryCreateErrror } from "./types";
-import ImageCropper from "../../service/images/ImageCropper";
+import { ICategoryEdit, ICategoryEditErrror } from "./types";
+import { ICategoryItem } from "../list/types";
+import Cropper from "cropperjs";
+import "cropperjs/dist/cropper.min.css";
 
-const CategoryCreatePage = () => {
+const CategoryEditPage = () => {
+  const imageRef = useRef(null);
+  const cropperRef = useRef(null);
+
   const navigator = useNavigate();
 
-  const cropper = useRef(null);
+  const { id } = useParams();
 
-  const [dto, setDto] = useState<ICategoryCreate>({
+  const [editCategory, setEditCategory] = useState<ICategoryEdit>({
     name: "",
     description: "",
     image: null,
   });
 
-  const [errors, setErrors] = useState<ICategoryCreateErrror>({
+  const [category, setCategory] = useState<ICategoryItem>({
+    id: -1,
     name: "",
     description: "",
     image: "",
   });
 
+  const [errors, setErrors] = useState<ICategoryEditErrror>({
+    name: "",
+    description: "",
+    image: "",
+  });
+
+  useEffect(() => {
+    axios
+      .get<ICategoryItem>(`${APP_ENV.BASE_URL}api/category/${id}`)
+      .then((resp) => {
+        console.log("Сервак дав 1 category", resp);
+        setCategory(resp.data);
+        // setEditCategory();
+      });
+
+    console.log("use Effect working");
+  }, []);
+
   const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setDto({ ...dto, [e.target.name]: e.target.value });
+    setEditCategory({ ...editCategory, [e.target.name]: e.target.value });
   };
 
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrors({ name: "", description: "", image: "" });
     axios
-      .post(`${APP_ENV.BASE_URL}api/category`, dto, {
+      .post(`${APP_ENV.BASE_URL}api/category/${id}`, editCategory, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -40,34 +64,21 @@ const CategoryCreatePage = () => {
         navigator("/");
       })
       .catch((er) => {
-        const errors = er.response.data as ICategoryCreateErrror;
+        const errors = er.response.data as ICategoryEditErrror;
         setErrors(errors);
-        console.log("Server error ", errors);
+        console.log("Server update error ", errors);
       });
     //console.log("Submit data", dto);
   };
   const onImageChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log("image change");
     if (e.target.files != null) {
-      const image = e.target.files[0];
-      console.log(image);
-      setDto({ ...dto, image: image });
+      setEditCategory({ ...editCategory, image: e.target.files[0] });
     }
-  };
-
-  const onImageSave = (canvas: HTMLCanvasElement) => {
-    console.log("onImageSave. canvas: ", canvas);
-    canvas.toBlob((blob) => {
-      if (blob == null || dto.image == null) return;
-      const file = new File([blob], dto.image.name, { type: dto.image.type });
-      console.log(file);
-      setDto({ ...dto, image: file });
-    }, dto.image?.type);
   };
 
   return (
     <>
-      <h1 className="text-center">Створити категорію</h1>
+      <h1 className="text-center">Edit категорію {id}</h1>
       <form className="col-md-6 offset-md-3" onSubmit={onSubmitHandler}>
         <div className="mb-3">
           <label htmlFor="name" className="form-label">
@@ -80,7 +91,7 @@ const CategoryCreatePage = () => {
             })}
             id="name"
             name="name"
-            value={dto.name}
+            // value={dto.name}
             onChange={onChangeHandler}
           />
           {errors.name && <div className="invalid-feedback">{errors.name}</div>}
@@ -96,20 +107,20 @@ const CategoryCreatePage = () => {
               "is-invalid": errors.description,
             })}
             name="description"
-            value={dto.description}
+            // value={dto.description}
             onChange={onChangeHandler}
           />
           {errors.description && (
             <div className="invalid-feedback">{errors.description}</div>
           )}
         </div>
+
         <div className="mb-3">
           <label htmlFor="image" className="form-label">
             Image
           </label>
           <input
             type="file"
-            accept="image/*"
             className={classNames("form-control", {
               "is-invalid": errors.image,
             })}
@@ -117,14 +128,19 @@ const CategoryCreatePage = () => {
             name="image"
             onChange={onImageChangeHandler}
           />
-          <ImageCropper
-            imageFile={dto.image}
-            onReady={onImageSave}
-          ></ImageCropper>
           {errors.image && (
             <div className="invalid-feedback">{errors.image}</div>
           )}
+
+          <img
+            src={
+              "https://static.wikia.nocookie.net/all-worlds-alliance/images/2/24/9abc7cf4bd20d565c5f7da6df73a9bdf.png/revision/latest?cb=20190106111029"
+            }
+            ref={imageRef}
+            alt="Image to crop"
+          />
         </div>
+
         <button type="submit" className="btn btn-primary">
           Додати
         </button>
@@ -132,4 +148,4 @@ const CategoryCreatePage = () => {
     </>
   );
 };
-export default CategoryCreatePage;
+export default CategoryEditPage;

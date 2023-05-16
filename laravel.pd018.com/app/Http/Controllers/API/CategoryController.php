@@ -112,7 +112,8 @@ class CategoryController extends Controller
         $category = DB::table('categories')->find($id);
         if($category == null)
             return response()->json("Not found", 404);
-        return response()->json($category);
+
+        return response()->json(['request'=>'get by id','result'=>$category]);
     }
 
     /**
@@ -187,14 +188,31 @@ class CategoryController extends Controller
         $category = Category::find($id);
         $category->update($input);
 
-        return response()->json($category);
+        return response()->json(['request'=>'edit by id','result'=>$category]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     tags={"Category"},
+     *     path="/api/category/{id}",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Category id to delete",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\Response(response="200", description="Success"),
+     *     @OA\Response(response="404", description="id not found"),
+     * )
      */
     public function destroy(string $id)
     {
-        //
+        $deleted = Category::destroy($id);
+        if($deleted < 1)
+            return response()->json($id,404);
+        return response()->json(['request'=>'delete by id','result'=>$deleted]);
     }
 }

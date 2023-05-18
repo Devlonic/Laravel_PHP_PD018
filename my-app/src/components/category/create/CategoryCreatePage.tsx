@@ -9,8 +9,6 @@ import ImageCropper from "../../service/images/ImageCropper";
 const CategoryCreatePage = () => {
   const navigator = useNavigate();
 
-  const cropper = useRef(null);
-
   const [dto, setDto] = useState<ICategoryCreate>({
     name: "",
     description: "",

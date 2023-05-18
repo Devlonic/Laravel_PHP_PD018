@@ -13,18 +13,31 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/api/category": {
+        "/api/category?page={page}": {
             "get": {
                 "tags": [
                     "Category"
                 ],
-                "operationId": "e2dd3a12f317e8f78516bb75c97bc7fc",
+                "operationId": "f95a9d623988afc1a9062cda229530a9",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Current page",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "List Categories."
                     }
                 }
-            },
+            }
+        },
+        "/api/category": {
             "post": {
                 "tags": [
                     "Category"
@@ -161,8 +174,8 @@
                     "200": {
                         "description": "Success"
                     },
-                    "400": {
-                        "description": "Validation has fault"
+                    "404": {
+                        "description": "id not found"
                     }
                 }
             }

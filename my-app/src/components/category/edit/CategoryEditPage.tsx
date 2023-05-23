@@ -7,26 +7,22 @@ import { ICategoryEdit, ICategoryEditErrror } from "./types";
 import { ICategoryItem } from "../list/types";
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.min.css";
+import ReactLoading from "react-loading";
+import ImageCropper from "../../service/images/ImageCropper";
+import ImageCropperElement from "../../service/images/ImageCropperElement";
 
 const CategoryEditPage = () => {
-  const imageRef = useRef(null);
-  const cropperRef = useRef(null);
-
   const navigator = useNavigate();
 
   const { id } = useParams();
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [editCategory, setEditCategory] = useState<ICategoryEdit>({
     name: "",
     description: "",
     image: null,
-  });
-
-  const [category, setCategory] = useState<ICategoryItem>({
-    id: -1,
-    name: "",
-    description: "",
-    image: "",
+    imageUrl: null,
   });
 
   const [errors, setErrors] = useState<ICategoryEditErrror>({
@@ -36,12 +32,23 @@ const CategoryEditPage = () => {
   });
 
   useEffect(() => {
+    setIsLoading(true);
     axios
       .get<ICategoryItem>(`${APP_ENV.BASE_URL}api/category/${id}`)
       .then((resp) => {
         console.log("Сервак дав 1 category", resp);
-        setCategory(resp.data);
-        // setEditCategory();
+        let initCategory = resp.data;
+        setIsLoading(false);
+        setEditCategory({
+          name: initCategory.name,
+          description: initCategory.description,
+          imageUrl: "/storage/" + initCategory.image,
+          image: null,
+        });
+      })
+      .catch((e) => {
+        setIsLoading(false);
+        console.log("get category by id error: ", e);
       });
 
     console.log("use Effect working");
@@ -53,6 +60,7 @@ const CategoryEditPage = () => {
 
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     setErrors({ name: "", description: "", image: "" });
     axios
       .post(`${APP_ENV.BASE_URL}api/category/${id}`, editCategory, {
@@ -61,90 +69,121 @@ const CategoryEditPage = () => {
         },
       })
       .then((resp) => {
+        setIsLoading(false);
         navigator("/");
       })
       .catch((er) => {
         const errors = er.response.data as ICategoryEditErrror;
         setErrors(errors);
         console.log("Server update error ", errors);
+        setIsLoading(false);
       });
     //console.log("Submit data", dto);
   };
+
   const onImageChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log("image input handle change", e);
     if (e.target.files != null) {
-      setEditCategory({ ...editCategory, image: e.target.files[0] });
+      const image = e.target.files[0];
+      onImageSaveHandler(image);
     }
   };
-
+  const onImageSaveHandler = (file: File) => {
+    console.log("image save handle", file);
+    setEditCategory({ ...editCategory, image: file });
+  };
   return (
     <>
       <h1 className="text-center">Edit категорію {id}</h1>
-      <form className="col-md-6 offset-md-3" onSubmit={onSubmitHandler}>
-        <div className="mb-3">
-          <label htmlFor="name" className="form-label">
-            Наза
-          </label>
-          <input
-            type="text"
-            className={classNames("form-control", {
-              "is-invalid": errors.name,
-            })}
-            id="name"
-            name="name"
-            // value={dto.name}
-            onChange={onChangeHandler}
-          />
-          {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+      {isLoading && (
+        <div className="">
+          <div className="row">
+            <div className="col"></div>
+            <div className="col">
+              <div className="d-flex justify-content-center">
+                <ReactLoading
+                  type="bars"
+                  color="gray"
+                  height={"50%"}
+                  width={"50%"}
+                ></ReactLoading>
+              </div>
+            </div>
+            <div className="col"></div>
+          </div>
         </div>
-        <div className="mb-3">
-          <label htmlFor="description" className="form-label">
-            Опис
-          </label>
-          <input
-            type="text"
-            id="description"
-            className={classNames("form-control", {
-              "is-invalid": errors.description,
-            })}
-            name="description"
-            // value={dto.description}
-            onChange={onChangeHandler}
-          />
-          {errors.description && (
-            <div className="invalid-feedback">{errors.description}</div>
-          )}
-        </div>
+      )}
+      {!isLoading && (
+        <form
+          className={classNames("col-md-6 offset-md-3")}
+          onSubmit={onSubmitHandler}
+        >
+          <div className="mb-3">
+            <label htmlFor="name" className="form-label">
+              Наза
+            </label>
+            <input
+              type="text"
+              className={classNames("form-control", {
+                "is-invalid": errors.name,
+              })}
+              id="name"
+              name="name"
+              value={editCategory.name}
+              onChange={onChangeHandler}
+            />
+            {errors.name && (
+              <div className="invalid-feedback">{errors.name}</div>
+            )}
+          </div>
+          <div className="mb-3">
+            <label htmlFor="description" className="form-label">
+              Опис
+            </label>
+            <input
+              type="text"
+              id="description"
+              className={classNames("form-control", {
+                "is-invalid": errors.description,
+              })}
+              name="description"
+              value={editCategory.description}
+              onChange={onChangeHandler}
+            />
+            {errors.description && (
+              <div className="invalid-feedback">{errors.description}</div>
+            )}
+          </div>
 
-        <div className="mb-3">
-          <label htmlFor="image" className="form-label">
-            Image
-          </label>
-          <input
-            type="file"
-            className={classNames("form-control", {
-              "is-invalid": errors.image,
-            })}
-            id="image"
-            name="image"
-            onChange={onImageChangeHandler}
-          />
-          {errors.image && (
-            <div className="invalid-feedback">{errors.image}</div>
-          )}
+          <div className="mb-3">
+            <label htmlFor="image" className="form-label">
+              Image
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              className={classNames("form-control", {
+                "is-invalid": errors.image,
+              })}
+              id="image"
+              name="image"
+              onChange={onImageChangeHandler}
+            />
+            <ImageCropperElement
+              imageUrl={editCategory.imageUrl}
+              imageFile={editCategory.image}
+              onImageSave={onImageSaveHandler}
+            ></ImageCropperElement>
+            {errors.image && (
+              <div className="invalid-feedback">{errors.image}</div>
+            )}
+          </div>
 
-          <img
-            src={
-              "https://static.wikia.nocookie.net/all-worlds-alliance/images/2/24/9abc7cf4bd20d565c5f7da6df73a9bdf.png/revision/latest?cb=20190106111029"
-            }
-            ref={imageRef}
-            alt="Image to crop"
-          />
-        </div>
-
-        <button type="submit" className="btn btn-primary">
-          Додати
-        </button>
-      </form>
+          <button type="submit" className="btn btn-primary">
+            Додати
+          </button>
+        </form>
+      )}
     </>
   );
 };

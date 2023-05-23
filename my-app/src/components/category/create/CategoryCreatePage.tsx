@@ -1,10 +1,10 @@
 import axios from "axios";
 import classNames from "classnames";
-import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { APP_ENV } from "../../../env";
 import { ICategoryCreate, ICategoryCreateErrror } from "./types";
-import ImageCropper from "../../service/images/ImageCropper";
+import ImageCropperElement from "../../service/images/ImageCropperElement";
 
 const CategoryCreatePage = () => {
   const navigator = useNavigate();
@@ -45,22 +45,15 @@ const CategoryCreatePage = () => {
     //console.log("Submit data", dto);
   };
   const onImageChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log("image change");
+    console.log("image input handle change", e);
     if (e.target.files != null) {
       const image = e.target.files[0];
-      console.log(image);
-      setDto({ ...dto, image: image });
+      onImageSaveHandler(image);
     }
   };
-
-  const onImageSave = (canvas: HTMLCanvasElement) => {
-    console.log("onImageSave. canvas: ", canvas);
-    canvas.toBlob((blob) => {
-      if (blob == null || dto.image == null) return;
-      const file = new File([blob], dto.image.name, { type: dto.image.type });
-      console.log(file);
-      setDto({ ...dto, image: file });
-    }, dto.image?.type);
+  const onImageSaveHandler = (file: File) => {
+    console.log("image save handle", file);
+    setDto({ ...dto, image: file });
   };
 
   return (
@@ -115,10 +108,11 @@ const CategoryCreatePage = () => {
             name="image"
             onChange={onImageChangeHandler}
           />
-          <ImageCropper
+          <ImageCropperElement
+            imageUrl={null}
             imageFile={dto.image}
-            onReady={onImageSave}
-          ></ImageCropper>
+            onImageSave={onImageSaveHandler}
+          ></ImageCropperElement>
           {errors.image && (
             <div className="invalid-feedback">{errors.image}</div>
           )}

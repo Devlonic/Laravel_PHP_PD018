@@ -124,7 +124,7 @@ class CategoryController extends Controller
         if($category == null)
             return response()->json("Not found", 404);
 
-        return response()->json(['request'=>'get by id','result'=>$category]);
+        return response()->json($category);
     }
 
     /**
@@ -199,7 +199,7 @@ class CategoryController extends Controller
         $category = Category::find($id);
         $category->update($input);
 
-        return response()->json(['request'=>'edit by id','result'=>$category]);
+        return response()->json($category);
     }
 
     /**
@@ -224,6 +224,6 @@ class CategoryController extends Controller
         $deleted = Category::destroy($id);
         if($deleted < 1)
             return response()->json($id,404);
-        return response()->json(['request'=>'delete by id','result'=>$deleted]);
+        return response()->json($deleted);
     }
 }

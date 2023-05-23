@@ -3,46 +3,50 @@ import Cropper from "cropperjs";
 // import "cropperjs/dist/cropper.min.css";
 
 type ImageCropperProps = {
-  imageFile: File | null;
+  imageUrl: string | null;
   onReady: any;
 };
 
-const ImageCropper = ({ imageFile, onReady }: ImageCropperProps) => {
+const ImageCropper = ({ onReady, imageUrl }: ImageCropperProps) => {
   const imageRef = useRef<HTMLImageElement>(null);
   const previewRef = useRef<HTMLImageElement>(null);
   const cropperRef = useRef<Cropper | null>(null);
 
-  let needToPreview = false;
+  const [needToPreview, setNeedToPreview] = useState<boolean>(false);
+
   useEffect(() => {
-    console.log("Imagecropper useEffect");
+    if (imageUrl != null) cropperRef.current?.replace(imageUrl);
+    else
+      console.log("cannot set image on cropper because imageUrl is ", imageUrl);
+    console.log("Imagecropper useEffect, imageUrl = ", imageUrl);
 
     // create Cropper instance
     if (cropperRef.current == null) {
+      console.log("need to create cropper");
       cropperRef.current = new Cropper(imageRef.current as HTMLImageElement, {
         crop(event: any) {
-          needToPreview = true;
+          console.log("need to set preview");
+          setNeedToPreview(true);
         },
       });
     }
-
     // set interval to throttle preview update
-    setInterval(() => {
+    var interval = setInterval(() => {
       const croppedCanvas = cropperRef.current?.getCroppedCanvas();
       if (previewRef.current != null && needToPreview) {
         previewRef.current.src = croppedCanvas?.toDataURL() as string;
-        needToPreview = false;
+        setNeedToPreview(false);
         console.log("was previewed");
+      } else {
+        console.log("no need to preview", previewRef.current, needToPreview);
       }
+      console.log("setInterval");
     }, 500);
-
-    // when we need to replace image
-    const reader = new FileReader();
-    reader.onload = () => {
-      cropperRef.current?.replace(reader.result as string);
+    return () => {
+      console.log("ImageCropper cleanup");
+      clearInterval(interval);
     };
-
-    if (imageFile != null) reader.readAsDataURL(imageFile);
-  }, [imageFile]);
+  }, [imageUrl]);
 
   const handleSave = () => {
     console.log("saved");
@@ -51,7 +55,7 @@ const ImageCropper = ({ imageFile, onReady }: ImageCropperProps) => {
   };
 
   return (
-    <div className="bg-light p-2 cropper-wrapper">
+    <>
       <div className="row">
         <div className="col">
           <div className="wrapper">
@@ -77,7 +81,7 @@ const ImageCropper = ({ imageFile, onReady }: ImageCropperProps) => {
           Save
         </button>
       </div>
-    </div>
+    </>
   );
 };
 

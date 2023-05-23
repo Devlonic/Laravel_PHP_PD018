@@ -2,6 +2,7 @@ export interface ICategoryEdit {
   name: string;
   image: File | null;
   description: string;
+  imageUrl: string | null;
 }
 
 export interface ICategoryEditErrror {

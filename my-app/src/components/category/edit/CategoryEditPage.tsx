@@ -8,8 +8,6 @@ import { ICategoryItem } from "../list/types";
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.min.css";
 import ReactLoading from "react-loading";
-import ImageCropper from "../../service/images/ImageCropper";
-import ImageCropperElement from "../../service/images/ImageCropperElement";
 
 const CategoryEditPage = () => {
   const navigator = useNavigate();
@@ -169,11 +167,6 @@ const CategoryEditPage = () => {
               name="image"
               onChange={onImageChangeHandler}
             />
-            <ImageCropperElement
-              imageUrl={editCategory.imageUrl}
-              imageFile={editCategory.image}
-              onImageSave={onImageSaveHandler}
-            ></ImageCropperElement>
             {errors.image && (
               <div className="invalid-feedback">{errors.image}</div>
             )}

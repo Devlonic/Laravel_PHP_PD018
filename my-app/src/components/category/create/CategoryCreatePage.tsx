@@ -4,7 +4,6 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { APP_ENV } from "../../../env";
 import { ICategoryCreate, ICategoryCreateErrror } from "./types";
-import ImageCropperElement from "../../service/images/ImageCropperElement";
 
 const CategoryCreatePage = () => {
   const navigator = useNavigate();
@@ -108,11 +107,7 @@ const CategoryCreatePage = () => {
             name="image"
             onChange={onImageChangeHandler}
           />
-          <ImageCropperElement
-            imageUrl={null}
-            imageFile={dto.image}
-            onImageSave={onImageSaveHandler}
-          ></ImageCropperElement>
+
           {errors.image && (
             <div className="invalid-feedback">{errors.image}</div>
           )}

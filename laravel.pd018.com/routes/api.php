@@ -24,6 +24,8 @@ Route::get("/category", [CategoryController::class, "index"]);
 Route::post("/category", [CategoryController::class,"store"]);
 Route::get("/category/{id}", [CategoryController::class, "edit"]);
 Route::delete("/category/{id}", [CategoryController::class, "destroy"]);
+Route::post("/category/{id}", [CategoryController::class, "update"]);
+
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'

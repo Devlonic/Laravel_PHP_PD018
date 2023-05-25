@@ -4,12 +4,16 @@ import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
 import classNames from "classnames";
 import { LegacyRef, useEffect, useRef, useState } from "react";
+
+const defaultThumb = "/imageThumb256.png";
+
 const CropperDialog: React.FC<ICroppedModal> = ({
-  imageUri = "/imageThumb256.png",
+  imageUri = defaultThumb,
   error = null,
   onSave = null,
 }) => {
   const [shown, setShown] = useState<boolean>(false);
+  const [wasClicked, setWasClicked] = useState<boolean>(false);
   const [croppedImage, setCroppedImage] = useState<string>(imageUri);
   const [cropper, setCropper] = useState<Cropper | null>(null);
 
@@ -55,9 +59,17 @@ const CropperDialog: React.FC<ICroppedModal> = ({
     await toggleModal();
   };
 
-  // select image from file
+  // select image from file OR edit received from above
   const onCroppedImageResultClick = async (e: any) => {
-    await fileSelectInputRef.current?.click();
+    if (!wasClicked && imageUri != defaultThumb) {
+      console.log("imageUri != defaultThumb");
+      cropper?.replace(imageUri);
+      await toggleModal();
+      await setWasClicked(true);
+    } else {
+      console.log("need to select");
+      await fileSelectInputRef.current?.click();
+    }
   };
 
   // the user has selected an image. opens modal to edit

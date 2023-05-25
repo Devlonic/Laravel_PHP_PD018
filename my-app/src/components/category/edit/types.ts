@@ -1,8 +1,8 @@
 export interface ICategoryEdit {
+  id: number;
   name: string;
-  image: File | null;
+  image: File | null | string;
   description: string;
-  imageUrl: string | null;
 }
 
 export interface ICategoryEditErrror {

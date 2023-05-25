@@ -8,6 +8,7 @@ import { ICategoryItem } from "../list/types";
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.min.css";
 import ReactLoading from "react-loading";
+import CropperDialog from "../../common/CropperDialog";
 
 const CategoryEditPage = () => {
   const navigator = useNavigate();
@@ -17,10 +18,10 @@ const CategoryEditPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [editCategory, setEditCategory] = useState<ICategoryEdit>({
+    id: -1,
     name: "",
     description: "",
     image: null,
-    imageUrl: null,
   });
 
   const [errors, setErrors] = useState<ICategoryEditErrror>({
@@ -34,14 +35,14 @@ const CategoryEditPage = () => {
     axios
       .get<ICategoryItem>(`${APP_ENV.BASE_URL}api/category/${id}`)
       .then((resp) => {
-        console.log("Сервак дав 1 category", resp);
         let initCategory = resp.data;
+        console.log("Сервак дав 1 category", initCategory);
         setIsLoading(false);
         setEditCategory({
+          id: initCategory.id,
           name: initCategory.name,
           description: initCategory.description,
-          imageUrl: "/storage/" + initCategory.image,
-          image: null,
+          image: "/storage/" + initCategory.image,
         });
       })
       .catch((e) => {
@@ -57,6 +58,7 @@ const CategoryEditPage = () => {
   };
 
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
+    console.log("CategoryEditPAge onSUbmitHAndler");
     e.preventDefault();
     setIsLoading(true);
     setErrors({ name: "", description: "", image: "" });
@@ -79,11 +81,10 @@ const CategoryEditPage = () => {
     //console.log("Submit data", dto);
   };
 
-  const onImageChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log("image input handle change", e);
-    if (e.target.files != null) {
-      const image = e.target.files[0];
-      onImageSaveHandler(image);
+  const onImageChangeHandler = (f: File) => {
+    console.log("image input handle change", f);
+    if (f != null) {
+      onImageSaveHandler(f);
     }
   };
   const onImageSaveHandler = (file: File) => {
@@ -116,6 +117,17 @@ const CategoryEditPage = () => {
           className={classNames("col-md-6 offset-md-3")}
           onSubmit={onSubmitHandler}
         >
+          <div className="mb-3">
+            <label className="form-label">ID</label>
+            <input
+              disabled={true}
+              type="text"
+              className={classNames("form-control", {
+                "is-invalid": errors.name,
+              })}
+              value={editCategory.id}
+            />
+          </div>
           <div className="mb-3">
             <label htmlFor="name" className="form-label">
               Наза
@@ -152,28 +164,18 @@ const CategoryEditPage = () => {
               <div className="invalid-feedback">{errors.description}</div>
             )}
           </div>
-
           <div className="mb-3">
             <label htmlFor="image" className="form-label">
               Image
             </label>
-            <input
-              type="file"
-              accept="image/*"
-              className={classNames("form-control", {
-                "is-invalid": errors.image,
-              })}
-              id="image"
-              name="image"
-              onChange={onImageChangeHandler}
-            />
-            {errors.image && (
-              <div className="invalid-feedback">{errors.image}</div>
-            )}
+            <CropperDialog
+              imageUri={editCategory.image as string}
+              onSave={onImageChangeHandler}
+              error={errors.image}
+            ></CropperDialog>
           </div>
-
-          <button type="submit" className="btn btn-primary">
-            Додати
+          <button type="submit" className="btn btn-danger">
+            Save edit
           </button>
         </form>
       )}

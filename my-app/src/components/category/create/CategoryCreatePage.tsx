@@ -4,7 +4,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { APP_ENV } from "../../../env";
 import { ICategoryCreate, ICategoryCreateErrror } from "./types";
-
+import CropperDialog from "../../common/CropperDialog";
 const CategoryCreatePage = () => {
   const navigator = useNavigate();
 
@@ -43,11 +43,10 @@ const CategoryCreatePage = () => {
       });
     //console.log("Submit data", dto);
   };
-  const onImageChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log("image input handle change", e);
-    if (e.target.files != null) {
-      const image = e.target.files[0];
-      onImageSaveHandler(image);
+  const onImageChangeHandler = (f: File) => {
+    console.log("image input handle change", f);
+    if (f != null) {
+      onImageSaveHandler(f);
     }
   };
   const onImageSaveHandler = (file: File) => {
@@ -97,20 +96,11 @@ const CategoryCreatePage = () => {
           <label htmlFor="image" className="form-label">
             Image
           </label>
-          <input
-            type="file"
-            accept="image/*"
-            className={classNames("form-control", {
-              "is-invalid": errors.image,
-            })}
-            id="image"
-            name="image"
-            onChange={onImageChangeHandler}
-          />
 
-          {errors.image && (
-            <div className="invalid-feedback">{errors.image}</div>
-          )}
+          <CropperDialog
+            onSave={onImageChangeHandler}
+            error={errors.image}
+          ></CropperDialog>
         </div>
         <button type="submit" className="btn btn-primary">
           Додати

@@ -1,3 +1,5 @@
+import { SyntheticEvent } from "react";
+
 export interface ICategoryCreate {
   name: string;
   image: File | null;

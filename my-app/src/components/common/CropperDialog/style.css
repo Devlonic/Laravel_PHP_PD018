@@ -1,0 +1,18 @@
+.cropper {
+  color: aqua;
+}
+
+.custom-modal {
+  display: block;
+  background-color: rgba(75, 78, 68, 0.26);
+  backdrop-filter: blur(1px);
+}
+
+.cur-pointer {
+  cursor: pointer !important;
+}
+
+.fix-max-width {
+  min-width: var(--bs-modal-width);
+  max-width: fit-content !important;
+}

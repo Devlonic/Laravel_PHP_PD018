@@ -5,9 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { APP_ENV } from "../../../env";
 import { ICategoryCreate, ICategoryCreateErrror } from "./types";
 import CropperDialog from "../../common/CropperDialog";
+import ReactLoading from "react-loading";
 const CategoryCreatePage = () => {
   const navigator = useNavigate();
-
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [dto, setDto] = useState<ICategoryCreate>({
     name: "",
     description: "",
@@ -24,24 +25,26 @@ const CategoryCreatePage = () => {
     setDto({ ...dto, [e.target.name]: e.target.value });
   };
 
-  const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrors({ name: "", description: "", image: "" });
-    axios
-      .post(`${APP_ENV.BASE_URL}api/category`, dto, {
+
+    try {
+      setIsProcessing(true);
+      await axios.post(`${APP_ENV.BASE_URL}api/category`, dto, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      })
-      .then((resp) => {
-        navigator("/");
-      })
-      .catch((er) => {
-        const errors = er.response.data as ICategoryCreateErrror;
-        setErrors(errors);
-        console.log("Server error ", errors);
       });
-    //console.log("Submit data", dto);
+      setIsProcessing(false);
+      navigator("..");
+    } catch (er: any) {
+      setIsProcessing(false);
+
+      const errors = er.response.data as ICategoryCreateErrror;
+      setErrors(errors);
+      console.log("Server error ", errors);
+    }
   };
   const onImageChangeHandler = (f: File) => {
     console.log("image input handle change", f);
@@ -57,55 +60,77 @@ const CategoryCreatePage = () => {
   return (
     <>
       <h1 className="text-center">Створити категорію</h1>
-      <form className="col-md-6 offset-md-3" onSubmit={onSubmitHandler}>
-        <div className="mb-3">
-          <label htmlFor="name" className="form-label">
-            Наза
-          </label>
-          <input
-            type="text"
-            className={classNames("form-control", {
-              "is-invalid": errors.name,
-            })}
-            id="name"
-            name="name"
-            value={dto.name}
-            onChange={onChangeHandler}
-          />
-          {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+      {isProcessing && (
+        <div className="">
+          <div className="row">
+            <div className="col"></div>
+            <div className="col">
+              <div className="d-flex justify-content-center">
+                <ReactLoading
+                  type="bars"
+                  color="gray"
+                  height={"50%"}
+                  width={"50%"}
+                ></ReactLoading>
+              </div>
+            </div>
+            <div className="col"></div>
+          </div>
         </div>
-        <div className="mb-3">
-          <label htmlFor="description" className="form-label">
-            Опис
-          </label>
-          <input
-            type="text"
-            id="description"
-            className={classNames("form-control", {
-              "is-invalid": errors.description,
-            })}
-            name="description"
-            value={dto.description}
-            onChange={onChangeHandler}
-          />
-          {errors.description && (
-            <div className="invalid-feedback">{errors.description}</div>
-          )}
-        </div>
-        <div className="mb-3">
-          <label htmlFor="image" className="form-label">
-            Image
-          </label>
+      )}
+      {!isProcessing && (
+        <form className="col-md-6 offset-md-3" onSubmit={onSubmitHandler}>
+          <div className="mb-3">
+            <label htmlFor="name" className="form-label">
+              Наза
+            </label>
+            <input
+              type="text"
+              className={classNames("form-control", {
+                "is-invalid": errors.name,
+              })}
+              id="name"
+              name="name"
+              value={dto.name}
+              onChange={onChangeHandler}
+            />
+            {errors.name && (
+              <div className="invalid-feedback">{errors.name}</div>
+            )}
+          </div>
+          <div className="mb-3">
+            <label htmlFor="description" className="form-label">
+              Опис
+            </label>
+            <input
+              type="text"
+              id="description"
+              className={classNames("form-control", {
+                "is-invalid": errors.description,
+              })}
+              name="description"
+              value={dto.description}
+              onChange={onChangeHandler}
+            />
+            {errors.description && (
+              <div className="invalid-feedback">{errors.description}</div>
+            )}
+          </div>
+          <div className="mb-3">
+            <label htmlFor="image" className="form-label">
+              Image
+            </label>
 
-          <CropperDialog
-            onSave={onImageChangeHandler}
-            error={errors.image}
-          ></CropperDialog>
-        </div>
-        <button type="submit" className="btn btn-primary">
-          Додати
-        </button>
-      </form>
+            <CropperDialog
+              onSave={onImageChangeHandler}
+              error={errors.image}
+            ></CropperDialog>
+          </div>
+          <button type="submit" className="btn btn-primary">
+            Додати
+          </button>
+        </form>
+      )}
     </>
   );
 };

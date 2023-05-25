@@ -1,0 +1,15 @@
+.custom-modal {
+  transition: 1s;
+  display: block;
+  background-color: rgba(187, 81, 81, 0.26);
+  backdrop-filter: blur(1px);
+}
+
+.cur-pointer {
+  cursor: pointer !important;
+}
+
+.fix-max-width {
+  min-width: var(--bs-modal-width);
+  max-width: fit-content !important;
+}

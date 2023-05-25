@@ -1,13 +1,15 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { LegacyRef, useEffect, useRef, useState } from "react";
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import { APP_ENV } from "../../../env";
 import { ICategoryGetResult, ICategoryItem } from "./types";
 import classNames from "classnames";
 import { randomUUID } from "crypto";
 import ReactLoading from "react-loading";
+import DangerDialog from "../../common/DangerDialog";
 
 const CategoryListPage = () => {
+  const deleteDialog = useRef();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [list, setList] = useState<ICategoryItem[]>([
     // {

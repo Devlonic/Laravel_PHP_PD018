@@ -6,7 +6,7 @@ import { Route, Routes } from "react-router-dom";
 import CategoryCreatePage from "./components/category/create/CategoryCreatePage";
 import DefaultLayout from "./components/containers/default/DefaultLayout";
 import CategoryEditPage from "./components/category/edit/CategoryEditPage";
-import CategoryDeleteConfirm from "./components/category/delete/CategoryDeleteConfirm";
+import CategoryDeletePage from "./components/category/delete/CategoryDeletePage";
 
 function App() {
   return (
@@ -17,10 +17,7 @@ function App() {
           <Route path="category/page/:page" element={<CategoryListPage />} />
           <Route path="category/create" element={<CategoryCreatePage />} />
           <Route path="category/edit/:id" element={<CategoryEditPage />} />
-          <Route
-            path="category/delete/:id"
-            element={<CategoryDeleteConfirm />}
-          />
+          <Route path="category/delete/:id" element={<CategoryDeletePage />} />
         </Route>
       </Routes>
     </>

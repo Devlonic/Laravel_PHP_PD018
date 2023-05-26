@@ -1,14 +1,14 @@
 import { Outlet } from "react-router-dom";
-import DefaultHeader from "./AuthHeader";
+import AuthHeader from "./AuthHeader";
 
-const DefaultLayout = () => {
+const AuthLayout = () => {
   return (
     <>
-      <DefaultHeader />
+      <AuthHeader />
       <div className="container">
         <Outlet />
       </div>
     </>
   );
 };
-export default DefaultLayout;
+export default AuthLayout;

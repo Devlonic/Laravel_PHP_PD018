@@ -5,6 +5,10 @@ import CategoryCreatePage from "./components/category/create/CategoryCreatePage"
 import DefaultLayout from "./components/containers/default/DefaultLayout";
 import CategoryEditPage from "./components/category/edit/CategoryEditPage";
 import CategoryDeletePage from "./components/category/delete/CategoryDeletePage";
+import AuthLayout from "./components/containers/auth/AuthLayout";
+import LoginPage from "./components/auth/LoginPage";
+import RegistrationPage from "./components/auth/RegistrationPage";
+import SignOutPage from "./components/auth/SignOutPage";
 
 function App() {
   return (
@@ -12,6 +16,12 @@ function App() {
       <Routes>
         <Route path="/" element={<DefaultLayout />}>
           <Route index element={<CategoryListPage />} />
+        </Route>
+        <Route path="/auth" element={<AuthLayout />}>
+          <Route index element={<LoginPage />}></Route>
+          <Route path="login" element={<LoginPage />}></Route>
+          <Route path="registration" element={<RegistrationPage />}></Route>
+          <Route path="signout" element={<SignOutPage />}></Route>
         </Route>
         <Route path="/control-panel" element={<DefaultLayout />}>
           <Route path="category">

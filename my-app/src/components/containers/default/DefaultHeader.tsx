@@ -38,11 +38,18 @@ const DefaultHeader = () => {
                 Пошук
               </button>
             </form>
+            <Link
+              className="btn btn-outline-secondary"
+              aria-current="page"
+              to="/auth/signout"
+            >
+              Sign out
+            </Link>
           </div>
         </div>
       </nav>
     </header>
   );
-}
+};
 
 export default DefaultHeader;

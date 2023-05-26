@@ -77,7 +77,12 @@
                     "400": {
                         "description": "Validation has fault"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/category/{id}": {
@@ -153,7 +158,12 @@
                     "400": {
                         "description": "Validation has fault"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             },
             "delete": {
                 "tags": [
@@ -178,7 +188,12 @@
                     "404": {
                         "description": "id not found"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/auth/login": {
@@ -306,7 +321,7 @@
                 },
                 "security": [
                     {
-                        "apiAuth": []
+                        "bearerAuth": []
                     }
                 ]
             }
@@ -324,7 +339,7 @@
                 },
                 "security": [
                     {
-                        "apiAuth": []
+                        "bearerAuth": []
                     }
                 ]
             }
@@ -342,7 +357,7 @@
                 },
                 "security": [
                     {
-                        "apiAuth": []
+                        "bearerAuth": []
                     }
                 ]
             }

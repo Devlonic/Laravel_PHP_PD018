@@ -123,7 +123,7 @@ const CategoryListPage = () => {
 
       {!isLoading && (
         <div className="onLoad">
-          <Link to="/category/create" className="btn btn-success">
+          <Link to="/control-panel/category/create" className="btn btn-success">
             Додати
           </Link>
 

@@ -142,7 +142,7 @@ class AuthController extends Controller
      * @OA\Post(
      *     path="/api/auth/logout",
      *     tags={"Auth"},
-     *     security={{"apiAuth":{}}},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(response="200", description="Display a listing of projects.")
      * )
      */
@@ -156,7 +156,7 @@ class AuthController extends Controller
      * @OA\Post(
      *     path="/api/auth/refresh",
      *     tags={"Auth"},
-     *     security={{"apiAuth":{}}},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(response="200", description="Display a listing of projects.")
      * )
      */
@@ -168,7 +168,7 @@ class AuthController extends Controller
      * @OA\Get(
      *     path="/api/auth/user-profile",
      *     tags={"Auth"},
-     *     security={{"apiAuth":{}}},
+     *     security={{ "bearerAuth": {} }},
      *     @OA\Response(response="200", description="Display a listing of projects.")
      * )
      */

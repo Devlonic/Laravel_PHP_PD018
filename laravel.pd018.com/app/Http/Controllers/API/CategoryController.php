@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\File;
 
 class CategoryController extends Controller
 {
+    public function __construct() {
+        $this->middleware('auth:api', ['except' => ['index', 'edit']]);
+    }
+
     /**
      * @OA\Get(
      *     tags={"Category"},
@@ -38,6 +42,7 @@ class CategoryController extends Controller
 
     /**
      * @OA\Post(
+     *     security={{"bearerAuth":{}}},
      *     tags={"Category"},
      *     path="/api/category",
      *     @OA\RequestBody(
@@ -129,6 +134,7 @@ class CategoryController extends Controller
 
     /**
      * @OA\Post(
+     *     security={{"bearerAuth":{}}},
      *     tags={"Category"},
      *     path="/api/category/{id}",
      *     @OA\Parameter(
@@ -204,6 +210,7 @@ class CategoryController extends Controller
 
     /**
      * @OA\Delete(
+     *     security={{"bearerAuth":{}}},
      *     tags={"Category"},
      *     path="/api/category/{id}",
      *     @OA\Parameter(

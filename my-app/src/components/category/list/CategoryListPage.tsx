@@ -1,4 +1,3 @@
-import axios from "axios";
 import { LegacyRef, useEffect, useRef, useState } from "react";
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import { APP_ENV } from "../../../env";
@@ -7,6 +6,7 @@ import classNames from "classnames";
 import { randomUUID } from "crypto";
 import ReactLoading from "react-loading";
 import DangerDialog from "../../common/DangerDialog";
+import { http } from "../../../services/tokenService";
 
 const CategoryListPage = () => {
   const deleteDialog = useRef();
@@ -30,7 +30,7 @@ const CategoryListPage = () => {
 
     console.log("try to get categories from server page " + localpage);
     setIsLoading(true);
-    axios
+    http
       .get<ICategoryGetResult>(
         `${APP_ENV.BASE_URL}api/category?page=${localpage}`
       )

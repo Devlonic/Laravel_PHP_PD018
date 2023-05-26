@@ -3,9 +3,8 @@ import { ChangeEvent, useState } from "react";
 import ReactLoading from "react-loading";
 import { useNavigate } from "react-router-dom";
 import { ILoginRequest, ILoginRequestError, ILoginResponce } from "./types";
-import axios from "axios";
 import { APP_ENV } from "../../../env";
-import { storeToken } from "../../../services/tokenService";
+import { http, storeToken } from "../../../services/tokenService";
 
 const LoginPage = () => {
   const navigator = useNavigate();
@@ -27,10 +26,10 @@ const LoginPage = () => {
   const onLoginHandler = async (e: any) => {
     try {
       await setIsProcessing(true);
-      var resp = await axios.post(`${APP_ENV.BASE_URL}api/auth/login`, dto);
+      var resp = await http.post(`${APP_ENV.BASE_URL}api/auth/login`, dto);
       var respData = resp.data as ILoginResponce;
       console.log("resp = ", respData);
-      // storeToken(respData.access_token);
+      storeToken(respData.access_token);
 
       await setIsProcessing(false);
     } catch (e) {

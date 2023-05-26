@@ -1,4 +1,3 @@
-import axios from "axios";
 import classNames from "classnames";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +5,7 @@ import { APP_ENV } from "../../../env";
 import { ICategoryCreate, ICategoryCreateErrror } from "./types";
 import CropperDialog from "../../common/CropperDialog";
 import ReactLoading from "react-loading";
+import { http } from "../../../services/tokenService";
 const CategoryCreatePage = () => {
   const navigator = useNavigate();
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -31,7 +31,7 @@ const CategoryCreatePage = () => {
 
     try {
       setIsProcessing(true);
-      await axios.post(`${APP_ENV.BASE_URL}api/category`, dto, {
+      await http.post(`${APP_ENV.BASE_URL}api/category`, dto, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

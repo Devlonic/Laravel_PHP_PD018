@@ -1,4 +1,3 @@
-import axios from "axios";
 import classNames from "classnames";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -7,6 +6,7 @@ import { ICategoryItem } from "../list/types";
 import { ICategoryDeleteErrror } from "./types";
 import DangerDialog from "../../common/DangerDialog";
 import ReactLoading from "react-loading";
+import { http } from "../../../services/tokenService";
 
 const CategoryDeletePage = () => {
   const { id } = useParams();
@@ -21,7 +21,7 @@ const CategoryDeletePage = () => {
   };
   const onSubmitHandler = () => {
     setIsProcessing(true);
-    axios
+    http
       .delete(`${APP_ENV.BASE_URL}api/category/${id}`)
       .then((resp) => {
         console.log(resp);

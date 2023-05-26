@@ -1,4 +1,3 @@
-import axios from "axios";
 import classNames from "classnames";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,6 +8,7 @@ import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.min.css";
 import ReactLoading from "react-loading";
 import CropperDialog from "../../common/CropperDialog";
+import { http } from "../../../services/tokenService";
 
 const CategoryEditPage = () => {
   const navigator = useNavigate();
@@ -34,9 +34,9 @@ const CategoryEditPage = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    axios
+    http
       .get<ICategoryItem>(`${APP_ENV.BASE_URL}api/category/${id}`)
-      .then((resp) => {
+      .then((resp: any) => {
         let initCategory = resp.data;
         console.log("Сервак дав 1 category", initCategory);
         setIsLoading(false);
@@ -47,7 +47,7 @@ const CategoryEditPage = () => {
           image: "/storage/" + initCategory.image,
         });
       })
-      .catch((e) => {
+      .catch((e: any) => {
         setIsLoading(false);
         console.log("get category by id error: ", e);
       });
@@ -65,7 +65,7 @@ const CategoryEditPage = () => {
     e.preventDefault();
     setIsLoading(true);
     setErrors({ name: "", description: "", image: "" });
-    axios
+    http
       .post(`${APP_ENV.BASE_URL}api/category/${id}`, toSendCategory, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -75,7 +75,7 @@ const CategoryEditPage = () => {
         setIsLoading(false);
         navigator("/");
       })
-      .catch((er) => {
+      .catch((er: any) => {
         const errors = er.response.data as ICategoryEditErrror;
         setErrors(errors);
         console.log("Server update error ", errors);
@@ -93,6 +93,7 @@ const CategoryEditPage = () => {
   const onImageSaveHandler = (file: File) => {
     console.log("image save handle", file);
     setEditCategory({ ...editCategory, image: file });
+    setToSendCategory({ ...toSendCategory, image: file });
   };
   return (
     <>

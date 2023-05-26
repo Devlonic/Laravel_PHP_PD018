@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Validator;
 use Symfony\Component\HttpFoundation\Response;
+use Storage;
 
 class AuthController extends Controller
 {
@@ -81,10 +82,13 @@ class AuthController extends Controller
      *     required=true,
      *     description="User registration data",
      *     @OA\MediaType(
-     *       mediaType="application/json",
+     *       mediaType="multipart/form-data",
      *       @OA\Schema(
-     *         required={"name", "email", "password", "password_confirmation"},
+     *         required={"name", "surname", "photo", "email", "password", "password_confirmation"},
      *         @OA\Property(property="name", type="string"),
+     *         @OA\Property(property="surname", type="string"),
+     *         @OA\Property(property="photo", type="string", format="binary"),
+     *         @OA\Property(property="tel", type="string"),
      *         @OA\Property(property="email", type="string"),
      *         @OA\Property(property="password", type="string"),
      *         @OA\Property(property="password_confirmation", type="string"),
@@ -119,6 +123,9 @@ class AuthController extends Controller
     public function register(Request $request) {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
+            'surname' => 'required|string|between:2,100',
+            'photo' => 'required|image|max:5000',
+            'tel' => 'string|max:5000|regex:/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|confirmed|min:6',
         ]);
@@ -127,8 +134,14 @@ class AuthController extends Controller
             return response()->json($validator->errors()->toJson(), Response::HTTP_BAD_REQUEST);
         }
 
+        $file = $request->file('photo');
+        $path = Storage::disk('public')->putFile('uploads/users', $file);
+
+        $validated = $validator->validated();
+        $validated["photo"] = $path;
+
         $user = User::create(array_merge(
-            $validator->validated(),
+            $validated,
             ['password' => bcrypt($request->password)]
         ));
 

@@ -24,6 +24,12 @@ export const decodeToken = (token: string) => {
   // return jwt.decode(token);
 };
 
+export const isSignedIn = (): boolean => {
+  let t = getToken();
+  // todo add overdue check
+  return t != null && t != "" && t != undefined;
+};
+
 export var http = axios.create({
   headers: {
     Authorization: `Bearer ${getToken()}`,

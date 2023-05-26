@@ -1,13 +1,20 @@
 import classNames from "classnames";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import ReactLoading from "react-loading";
 import { useNavigate } from "react-router-dom";
 import { ILoginRequest, ILoginRequestError, ILoginResponce } from "./types";
 import { APP_ENV } from "../../../env";
-import { http, storeToken } from "../../../services/tokenService";
+import { http, isSignedIn, storeToken } from "../../../services/tokenService";
 
 const LoginPage = () => {
   const navigator = useNavigate();
+
+  useEffect(() => {
+    if (isSignedIn() == true) {
+      navigator("/");
+    }
+  });
+
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [errors, setErrors] = useState<ILoginRequestError>({
     email: "",

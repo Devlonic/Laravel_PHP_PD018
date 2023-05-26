@@ -61,7 +61,7 @@ const CategoryListPage = () => {
       <Link
         to={
           l.url
-            ? `/category/page/${new URLSearchParams(
+            ? `/control-panel/category/page/${new URLSearchParams(
                 new URL(l.url as string).search
               ).get("page")}`
             : ""
@@ -83,13 +83,13 @@ const CategoryListPage = () => {
       <td>{category.description}</td>
       <td>
         <Link
-          to={`/category/edit/${category.id}`}
+          to={`/control-panel/category/edit/${category.id}`}
           className="btn btn-primary m-1"
         >
           Edit
         </Link>
         <Link
-          to={`/category/delete/${category.id}`}
+          to={`/control-panel/category/delete/${category.id}`}
           className="btn btn-danger m-1"
         >
           Delete

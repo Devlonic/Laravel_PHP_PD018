@@ -17,7 +17,7 @@ const CategoryDeletePage = () => {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   const onCancelHandler = () => {
-    navigator("..");
+    navigator("../..");
   };
   const onSubmitHandler = () => {
     setIsProcessing(true);
@@ -26,7 +26,7 @@ const CategoryDeletePage = () => {
       .then((resp) => {
         console.log(resp);
         setIsProcessing(false);
-        navigator("..");
+        navigator("../..");
       })
       .catch((er) => {
         setIsProcessing(false);

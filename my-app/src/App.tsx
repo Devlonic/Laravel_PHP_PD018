@@ -1,5 +1,3 @@
-import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import CategoryListPage from "./components/category/list/CategoryListPage";
 import { Route, Routes } from "react-router-dom";
@@ -14,10 +12,19 @@ function App() {
       <Routes>
         <Route path="/" element={<DefaultLayout />}>
           <Route index element={<CategoryListPage />} />
-          <Route path="category/page/:page" element={<CategoryListPage />} />
-          <Route path="category/create" element={<CategoryCreatePage />} />
-          <Route path="category/edit/:id" element={<CategoryEditPage />} />
-          <Route path="category/delete/:id" element={<CategoryDeletePage />} />
+        </Route>
+        <Route path="/control-panel" element={<DefaultLayout />}>
+          <Route path="category">
+            <Route index element={<CategoryListPage />} />
+            <Route path="page/:page" element={<CategoryListPage />} />
+            <Route path="create" element={<CategoryCreatePage />} />
+            <Route path="edit">
+              <Route path=":id" element={<CategoryEditPage />} />
+            </Route>
+            <Route path="delete">
+              <Route path=":id" element={<CategoryDeletePage />} />
+            </Route>
+          </Route>
         </Route>
       </Routes>
     </>

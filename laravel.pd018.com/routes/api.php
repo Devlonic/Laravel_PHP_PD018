@@ -20,11 +20,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get("/category", [CategoryController::class, "index"]);
-Route::post("/category", [CategoryController::class,"store"]);
-Route::get("/category/{id}", [CategoryController::class, "edit"]);
-Route::delete("/category/{id}", [CategoryController::class, "destroy"]);
-Route::post("/category/{id}", [CategoryController::class, "update"]);
+Route::group(['middleware'=>'api', 'prefix'=>'category'], function ($router) {
+    Route::get("/", [CategoryController::class, "index"]);
+    Route::post("/", [CategoryController::class,"store"]);
+    Route::get("/{id}", [CategoryController::class, "edit"]);
+    Route::delete("/{id}", [CategoryController::class, "destroy"]);
+    Route::post("/{id}", [CategoryController::class, "update"]);
+});
 
 Route::group([
     'middleware' => 'api',

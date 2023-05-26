@@ -24,6 +24,8 @@ const CategoryEditPage = () => {
     image: null,
   });
 
+  const [toSendCategory, setToSendCategory] = useState<any>({});
+
   const [errors, setErrors] = useState<ICategoryEditErrror>({
     name: "",
     description: "",
@@ -55,6 +57,7 @@ const CategoryEditPage = () => {
 
   const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setEditCategory({ ...editCategory, [e.target.name]: e.target.value });
+    setToSendCategory({ ...toSendCategory, [e.target.name]: e.target.value });
   };
 
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
@@ -63,7 +66,7 @@ const CategoryEditPage = () => {
     setIsLoading(true);
     setErrors({ name: "", description: "", image: "" });
     axios
-      .post(`${APP_ENV.BASE_URL}api/category/${id}`, editCategory, {
+      .post(`${APP_ENV.BASE_URL}api/category/${id}`, toSendCategory, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

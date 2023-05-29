@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Laravel\Socialite\Facades\Socialite;
 use Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Storage;
@@ -12,7 +13,7 @@ use Storage;
 class AuthController extends Controller
 {
     public function __construct() {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'handleGoogleCallback', 'redirectToGoogle']]);
     }
 
     /**
@@ -149,6 +150,15 @@ class AuthController extends Controller
             'message' => 'User successfully registered',
             'user' => $user
         ], Response::HTTP_CREATED);
+    }
+
+    public function redirectToGoogle(Request $request) {
+        return Socialite::driver('google')->redirect();
+    }
+    public function handleGoogleCallback(Request $request) {
+        $user = Socialite::driver('google')->user();
+
+        return response()->json($user);
     }
 
     /**

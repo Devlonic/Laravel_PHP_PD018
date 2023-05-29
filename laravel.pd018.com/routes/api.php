@@ -33,6 +33,10 @@ Route::group([
     'prefix' => 'auth'
 ], function ($router) {
     Route::post('/login', [AuthController::class, 'login']);
+
+    Route::get('/google/oauth', [AuthController::class, 'redirectToGoogle']);
+    Route::get('/google/oauth/callback', [AuthController::class, 'handleGoogleCallback']);
+
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);

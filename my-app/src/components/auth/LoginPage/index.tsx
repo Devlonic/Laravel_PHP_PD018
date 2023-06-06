@@ -5,55 +5,63 @@ import { useNavigate } from "react-router-dom";
 import { ILoginRequest, ILoginRequestError, ILoginResponce } from "./types";
 import { APP_ENV } from "../../../env";
 import { http, isSignedIn, storeToken } from "../../../services/tokenService";
-
+import * as yup from "yup";
+import { useFormik } from "formik";
+import { AxiosError } from "axios";
 const LoginPage = () => {
   const navigator = useNavigate();
-
   useEffect(() => {
     if (isSignedIn() == true) {
       navigator("/");
     }
   });
+  const initValues: ILoginRequest = {
+    email: "",
+    password: "",
+  };
+  const loginSchema = yup.object({
+    email: yup.string().required("Enter email").email("Пошта вказана не вірно"),
+    password: yup.string().required("Enter password"),
+  });
+
+  const [responceError, setResponceError] = useState<string>();
 
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [errors, setErrors] = useState<ILoginRequestError>({
-    email: "",
-    password: "",
-    error: "",
-  });
-  const [dto, setDto] = useState<ILoginRequest>({
-    email: "",
-    password: "",
-  });
 
-  const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setDto({ ...dto, [e.target.name]: e.target.value });
-  };
-
-  const onLoginHandler = async (e: any) => {
+  const onSubmitFormikData = async (values: ILoginRequest) => {
     try {
       await setIsProcessing(true);
-      var resp = await http.post(`${APP_ENV.BASE_URL}api/auth/login`, dto);
+      var resp = await http.post(`api/auth/login`, values);
       var respData = resp.data as ILoginResponce;
       console.log("resp = ", respData);
       storeToken(respData.access_token);
 
       await setIsProcessing(false);
-    } catch (e) {
-      const er = e as any;
-      const errors = er.response.data as ILoginRequestError;
-      setErrors(errors);
-      console.log("Server error", errors);
+    } catch (e: any) {
+      setResponceError("Wrong login or password");
       await setIsProcessing(false);
     }
   };
+
+  const formik = useFormik({
+    initialValues: initValues,
+    validationSchema: loginSchema,
+    onSubmit: onSubmitFormikData,
+  });
+
+  const { values, errors, touched, handleSubmit, handleChange } = formik;
 
   return (
     <div className="d-flex justify-content-center">
       <div className="w-25">
         <h1 className="text-center">Login</h1>
+        {responceError && (
+          <div className="alert alert-danger" role="alert">
+            {responceError}
+          </div>
+        )}
         {isProcessing && (
-          <div className="">
+          <div className="wrapper">
             <div className="row">
               <div className="col"></div>
               <div className="col">
@@ -71,52 +79,50 @@ const LoginPage = () => {
           </div>
         )}
         {!isProcessing && (
-          <div className="wrapper">
-            <div className="mb-3">
-              <label htmlFor="email" className="form-label">
-                Email
-              </label>
-              <input
-                type="email"
-                className={classNames("form-control", {
-                  "is-invalid": errors.email,
-                })}
-                id="email"
-                name="email"
-                value={dto.email}
-                onChange={onChangeHandler}
-              />
-              {errors.email && (
-                <div className="invalid-feedback">{errors.email}</div>
-              )}
+          <form onSubmit={handleSubmit}>
+            <div className="wrapper">
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  className={classNames("form-control", {
+                    "is-invalid": errors.email && touched.email,
+                  })}
+                  id="email"
+                  name="email"
+                  value={values.email}
+                  onChange={handleChange}
+                />
+                {errors.email && touched.email && (
+                  <div className="invalid-feedback">{errors.email}</div>
+                )}
+              </div>
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  className={classNames("form-control", {
+                    "is-invalid": errors.password,
+                  })}
+                  name="password"
+                  value={values.password}
+                  onChange={handleChange}
+                />
+                {errors.password && touched.password && (
+                  <div className="invalid-feedback">{errors.password}</div>
+                )}
+              </div>
+              <button type="submit" className="btn btn-primary">
+                Sign in
+              </button>
+              {/* {errors.error && <div className="text-danger">{errors.error}</div>} */}
             </div>
-            <div className="mb-3">
-              <label htmlFor="password" className="form-label">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                className={classNames("form-control", {
-                  "is-invalid": errors.password,
-                })}
-                name="password"
-                value={dto.password}
-                onChange={onChangeHandler}
-              />
-              {errors.password && (
-                <div className="invalid-feedback">{errors.password}</div>
-              )}
-            </div>
-            <button
-              onClick={onLoginHandler}
-              type="button"
-              className="btn btn-primary"
-            >
-              Sign in
-            </button>
-            {errors.error && <div className="text-danger">{errors.error}</div>}
-          </div>
+          </form>
         )}
       </div>
     </div>

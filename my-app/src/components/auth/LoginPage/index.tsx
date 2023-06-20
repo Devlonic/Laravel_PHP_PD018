@@ -2,12 +2,7 @@ import classNames from "classnames";
 import { ChangeEvent, useEffect, useState } from "react";
 import ReactLoading from "react-loading";
 import { useNavigate } from "react-router-dom";
-import {
-  ILoginRequest,
-  ILoginRequestError,
-  ILoginResponce,
-  IUser,
-} from "./types";
+import { ILoginRequest, ILoginRequestError, ILoginResponce } from "./types";
 import { APP_ENV } from "../../../env";
 import {
   decodeToken,
@@ -19,7 +14,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import { AxiosError } from "axios";
 import { useDispatch } from "react-redux";
-import { AuthUserActionType } from "../types";
+import { AuthUserActionType, IAuthUser } from "../types";
 const LoginPage = () => {
   const navigator = useNavigate();
   const dispatch = useDispatch();
@@ -49,7 +44,7 @@ const LoginPage = () => {
       var respData = resp.data as ILoginResponce;
       console.log("resp = ", respData);
       storeToken(respData.access_token);
-      const user = decodeToken(respData.access_token) as IUser;
+      const user = decodeToken(respData.access_token) as IAuthUser;
       dispatch({
         type: AuthUserActionType.LOGIN_USER,
         payload: user,

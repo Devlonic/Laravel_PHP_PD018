@@ -4,15 +4,6 @@ import { useEffect } from "react";
 import { isSignedIn } from "../../../services/tokenService";
 
 const DefaultLayout = () => {
-  const navigator = useNavigate();
-
-  useEffect(() => {
-    console.log("DefaultLayout useEffect");
-    if (isSignedIn() == false) {
-      navigator("/auth/login");
-    }
-  }, []);
-
   return (
     <>
       <DefaultHeader />

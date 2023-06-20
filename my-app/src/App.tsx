@@ -9,13 +9,16 @@ import AuthLayout from "./components/containers/auth/AuthLayout";
 import LoginPage from "./components/auth/LoginPage";
 import RegistrationPage from "./components/auth/RegistrationPage";
 import SignOutPage from "./components/auth/SignOutPage";
+import AdminLayout from "./components/containers/admin/AdminLayout";
+import CategoryIndexPage from "./components/category/index/CategoryListPage";
 
 function App() {
   return (
     <>
       <Routes>
         <Route path="/" element={<DefaultLayout />}>
-          <Route index element={<CategoryListPage />} />
+          <Route index element={<CategoryIndexPage />} />
+          <Route path="page/:page" element={<CategoryIndexPage />} />
         </Route>
         <Route path="/auth" element={<AuthLayout />}>
           <Route index element={<LoginPage />}></Route>
@@ -23,7 +26,7 @@ function App() {
           <Route path="registration" element={<RegistrationPage />}></Route>
           <Route path="signout" element={<SignOutPage />}></Route>
         </Route>
-        <Route path="/control-panel" element={<DefaultLayout />}>
+        <Route path="/admin" element={<AdminLayout />}>
           <Route path="category">
             <Route index element={<CategoryListPage />} />
             <Route path="page/:page" element={<CategoryListPage />} />

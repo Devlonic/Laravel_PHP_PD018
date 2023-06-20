@@ -13,11 +13,3 @@ export interface ILoginResponce {
   access_token: string;
   expires_in: number;
 }
-
-export interface IUser {
-  name: string;
-  surname: string;
-  email: string;
-  tel: string;
-  photo: string;
-}

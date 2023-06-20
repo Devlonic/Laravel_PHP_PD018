@@ -8,16 +8,9 @@ import ReactLoading from "react-loading";
 import DangerDialog from "../../common/DangerDialog";
 import { http } from "../../../services/tokenService";
 
-const CategoryListPage = () => {
-  const deleteDialog = useRef();
+const CategoryIndexPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [list, setList] = useState<ICategoryItem[]>([
-    // {
-    //     id: 1,
-    //     name: "SSD",
-    //     description: "Для швикдих людей"
-    // }
-  ]);
+  const [list, setList] = useState<ICategoryItem[]>([]);
   const [data, setData] = useState<ICategoryGetResult>();
 
   const { page } = useParams();
@@ -61,9 +54,9 @@ const CategoryListPage = () => {
       <Link
         to={
           l.url
-            ? `/admin/category/page/${new URLSearchParams(
-                new URL(l.url as string).search
-              ).get("page")}`
+            ? `/page/${new URLSearchParams(new URL(l.url as string).search).get(
+                "page"
+              )}`
             : ""
         }
         className="page-link"
@@ -81,20 +74,6 @@ const CategoryListPage = () => {
         <img src={APP_ENV.BASE_URL + "/storage/" + category.image} width={50} />
       </td>
       <td>{category.description}</td>
-      <td>
-        <Link
-          to={`/admin/category/edit/${category.id}`}
-          className="btn btn-primary m-1"
-        >
-          Edit
-        </Link>
-        <Link
-          to={`/admin/category/delete/${category.id}`}
-          className="btn btn-danger m-1"
-        >
-          Delete
-        </Link>
-      </td>
     </tr>
   ));
   //console.error("Сало");
@@ -123,9 +102,6 @@ const CategoryListPage = () => {
 
       {!isLoading && (
         <div className="onLoad">
-          <Link to="/admin/category/create" className="btn btn-success">
-            Додати
-          </Link>
           <table className="table">
             <thead>
               <tr>
@@ -133,7 +109,6 @@ const CategoryListPage = () => {
                 <th scope="col">Назва</th>
                 <th scope="col">Фото</th>
                 <th scope="col">Опис</th>
-                <th scope="col"></th>
               </tr>
             </thead>
             <tbody>{viewData}</tbody>
@@ -147,4 +122,4 @@ const CategoryListPage = () => {
   );
 };
 
-export default CategoryListPage;
+export default CategoryIndexPage;

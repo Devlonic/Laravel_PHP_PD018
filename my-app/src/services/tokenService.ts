@@ -4,13 +4,8 @@ import jwtDecode from "jwt-decode";
 import { APP_ENV } from "../env";
 
 export const storeToken = (token: string) => {
-  localStorage.setItem("token", token);
-  http = axios.create({
-    baseURL: APP_ENV.BASE_URL,
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-  });
+  localStorage.setItem("token", `Bearer ${token}`);
+  http.defaults.headers.common["Authorization"] = getToken();
 };
 
 export const getToken = () => {
@@ -18,6 +13,7 @@ export const getToken = () => {
 };
 
 export const removeToken = () => {
+  delete http.defaults.headers.common["Authorization"];
   return localStorage.removeItem("token");
 };
 

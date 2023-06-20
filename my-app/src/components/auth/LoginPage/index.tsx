@@ -2,14 +2,28 @@ import classNames from "classnames";
 import { ChangeEvent, useEffect, useState } from "react";
 import ReactLoading from "react-loading";
 import { useNavigate } from "react-router-dom";
-import { ILoginRequest, ILoginRequestError, ILoginResponce } from "./types";
+import {
+  ILoginRequest,
+  ILoginRequestError,
+  ILoginResponce,
+  IUser,
+} from "./types";
 import { APP_ENV } from "../../../env";
-import { http, isSignedIn, storeToken } from "../../../services/tokenService";
+import {
+  decodeToken,
+  http,
+  isSignedIn,
+  storeToken,
+} from "../../../services/tokenService";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { AxiosError } from "axios";
+import { useDispatch } from "react-redux";
+import { AuthUserActionType } from "../types";
 const LoginPage = () => {
   const navigator = useNavigate();
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (isSignedIn() == true) {
       navigator("/");
@@ -35,7 +49,11 @@ const LoginPage = () => {
       var respData = resp.data as ILoginResponce;
       console.log("resp = ", respData);
       storeToken(respData.access_token);
-
+      const user = decodeToken(respData.access_token) as IUser;
+      dispatch({
+        type: AuthUserActionType.LOGIN_USER,
+        payload: user,
+      });
       await setIsProcessing(false);
     } catch (e: any) {
       setResponceError("Wrong login or password");

@@ -10,6 +10,8 @@ import {
   IRegistrationResponce,
 } from "./types";
 import CropperDialog from "../../common/CropperDialog";
+import * as yup from "yup";
+import { useFormik } from "formik";
 
 const RegistrationPage = () => {
   const navigator = useNavigate();
@@ -21,17 +23,8 @@ const RegistrationPage = () => {
   });
 
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [errors, setErrors] = useState<IRegistrationRequestError>({
-    email: "",
-    tel: "",
-    photo: "",
-    password: "",
-    password_confirmation: "",
-    name: "",
-    surname: "",
-    error: "",
-  });
-  const [dto, setDto] = useState<IRegistrationRequest>({
+
+  const initValues: IRegistrationRequest = {
     email: "",
     tel: "",
     photo: null,
@@ -39,16 +32,29 @@ const RegistrationPage = () => {
     password_confirmation: "",
     name: "",
     surname: "",
-  });
-
-  const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setDto({ ...dto, [e.target.name]: e.target.value });
   };
 
-  const onRegistrationHandler = async (e: any) => {
+  const [responceError, setResponceError] = useState<string>();
+
+  const registrationSchema = yup.object({
+    email: yup.string().required("Enter email").email("Пошта вказана не вірно"),
+    tel: yup.string().required("Enter phone number"), // todo add regex validation
+    password: yup.string().required("Enter password"),
+    photo: yup.mixed().required("Select image"),
+    password_confirmation: yup
+      .string()
+      .required("Repeat password")
+      .test("is-same-passwords", "Passwords does not match", (value) => {
+        return true;
+      }),
+    name: yup.string().required("Enter name"),
+    surname: yup.string().required("Enter surname"),
+  });
+
+  const onSubmitFormikData = async (values: IRegistrationRequest) => {
     try {
       await setIsProcessing(true);
-      var resp = await http.post(`${APP_ENV.BASE_URL}api/auth/register`, dto, {
+      var resp = await http.post(`api/auth/register`, values, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -58,23 +64,17 @@ const RegistrationPage = () => {
       navigator("../login");
       await setIsProcessing(false);
     } catch (e: any) {
-      const errors = e.response.data as IRegistrationRequestError;
-      setErrors(errors);
-      console.log("Server error", errors);
+      setResponceError("Wrong login or password");
       await setIsProcessing(false);
     }
   };
+  const formik = useFormik({
+    initialValues: initValues,
+    validationSchema: registrationSchema,
+    onSubmit: onSubmitFormikData,
+  });
 
-  const onImageChangeHandler = (f: File) => {
-    console.log("image input handle change", f);
-    if (f != null) {
-      onImageSaveHandler(f);
-    }
-  };
-  const onImageSaveHandler = (file: File) => {
-    console.log("image save handle", file);
-    setDto({ ...dto, photo: file });
-  };
+  const { values, errors, touched, handleSubmit, handleChange } = formik;
 
   return (
     <div className="d-flex justify-content-center">
@@ -99,136 +99,144 @@ const RegistrationPage = () => {
           </div>
         )}
         {!isProcessing && (
-          <div className="wrapper">
-            <div className="mb-3">
-              <label htmlFor="name" className="form-label">
-                Name
-              </label>
-              <input
-                type="text"
-                className={classNames("form-control", {
-                  "is-invalid": errors.name,
-                })}
-                id="name"
-                name="name"
-                value={dto.name}
-                onChange={onChangeHandler}
-              />
-              {errors.name && (
-                <div className="invalid-feedback">{errors.name}</div>
-              )}
-            </div>
-            <div className="mb-3">
-              <label htmlFor="surname" className="form-label">
-                Surname
-              </label>
-              <input
-                type="text"
-                className={classNames("form-control", {
-                  "is-invalid": errors.surname,
-                })}
-                id="surname"
-                name="surname"
-                value={dto.surname}
-                onChange={onChangeHandler}
-              />
-              {errors.surname && (
-                <div className="invalid-feedback">{errors.surname}</div>
-              )}
-            </div>
-            <div className="mb-3">
-              <label htmlFor="tel" className="form-label">
-                Telephone
-              </label>
-              <input
-                type="tel"
-                className={classNames("form-control", {
-                  "is-invalid": errors.tel,
-                })}
-                id="tel"
-                name="tel"
-                value={dto.tel}
-                onChange={onChangeHandler}
-              />
-              {errors.tel && (
-                <div className="invalid-feedback">{errors.tel}</div>
-              )}
-            </div>
-            <div className="mb-3">
-              <label htmlFor="email" className="form-label">
-                Email
-              </label>
-              <input
-                type="email"
-                className={classNames("form-control", {
-                  "is-invalid": errors.email,
-                })}
-                id="email"
-                name="email"
-                value={dto.email}
-                onChange={onChangeHandler}
-              />
-              {errors.email && (
-                <div className="invalid-feedback">{errors.email}</div>
-              )}
-            </div>
-            <div className="mb-3">
-              <label htmlFor="password" className="form-label">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                className={classNames("form-control", {
-                  "is-invalid": errors.password,
-                })}
-                name="password"
-                value={dto.password}
-                onChange={onChangeHandler}
-              />
-              {errors.password && (
-                <div className="invalid-feedback">{errors.password}</div>
-              )}
-            </div>
-            <div className="mb-3">
-              <label htmlFor="password_confirmation" className="form-label">
-                Repeat password
-              </label>
-              <input
-                type="password"
-                id="password_confirmation"
-                className={classNames("form-control", {
-                  "is-invalid": errors.password_confirmation,
-                })}
-                name="password_confirmation"
-                value={dto.password_confirmation}
-                onChange={onChangeHandler}
-              />
-              {errors.password_confirmation && (
-                <div className="invalid-feedback">
-                  {errors.password_confirmation}
-                </div>
-              )}
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Photo</label>
-              <CropperDialog
-                onSave={onImageChangeHandler}
-                error={errors.photo}
-              ></CropperDialog>
-            </div>
-            <div className="mb-3">
-              <button
-                onClick={onRegistrationHandler}
-                type="button"
-                className="btn btn-primary w-100"
-              >
-                Sign up!
-              </button>
-            </div>
+          <form onSubmit={handleSubmit}>
+            <div className="wrapper">
+              <div className="mb-3">
+                <label htmlFor="name" className="form-label">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  className={classNames("form-control", {
+                    "is-invalid": errors.name && touched.name,
+                  })}
+                  id="name"
+                  name="name"
+                  value={values.name}
+                  onChange={handleChange}
+                />
+                {errors.name && (
+                  <div className="invalid-feedback">{errors.name}</div>
+                )}
+              </div>
+              <div className="mb-3">
+                <label htmlFor="surname" className="form-label">
+                  Surname
+                </label>
+                <input
+                  type="text"
+                  className={classNames("form-control", {
+                    "is-invalid": errors.surname && touched.surname,
+                  })}
+                  id="surname"
+                  name="surname"
+                  value={values.surname}
+                  onChange={handleChange}
+                />
+                {errors.surname && (
+                  <div className="invalid-feedback">{errors.surname}</div>
+                )}
+              </div>
+              <div className="mb-3">
+                <label htmlFor="tel" className="form-label">
+                  Telephone
+                </label>
+                <input
+                  type="tel"
+                  className={classNames("form-control", {
+                    "is-invalid": errors.tel && touched.tel,
+                  })}
+                  id="tel"
+                  name="tel"
+                  value={values.tel}
+                  onChange={handleChange}
+                />
+                {errors.tel && (
+                  <div className="invalid-feedback">{errors.tel}</div>
+                )}
+              </div>
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  className={classNames("form-control", {
+                    "is-invalid": errors.email && touched.email,
+                  })}
+                  id="email"
+                  name="email"
+                  value={values.email}
+                  onChange={handleChange}
+                />
+                {errors.email && (
+                  <div className="invalid-feedback">{errors.email}</div>
+                )}
+              </div>
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  className={classNames("form-control", {
+                    "is-invalid": errors.password && touched.password,
+                  })}
+                  name="password"
+                  value={values.password}
+                  onChange={handleChange}
+                />
+                {errors.password && (
+                  <div className="invalid-feedback">{errors.password}</div>
+                )}
+              </div>
+              <div className="mb-3">
+                <label htmlFor="password_confirmation" className="form-label">
+                  Repeat password
+                </label>
+                <input
+                  type="password"
+                  id="password_confirmation"
+                  className={classNames("form-control", {
+                    "is-invalid":
+                      errors.password_confirmation &&
+                      touched.password_confirmation,
+                  })}
+                  name="password_confirmation"
+                  value={values.password_confirmation}
+                  onChange={handleChange}
+                />
+                {errors.password_confirmation && (
+                  <div className="invalid-feedback">
+                    {errors.password_confirmation}
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Photo</label>
+                <CropperDialog
+                  onSave={handleChange}
+                  error={
+                    errors.photo === undefined
+                      ? ""
+                      : touched.photo == true
+                      ? errors.photo
+                      : ""
+                  }
+                ></CropperDialog>
+              </div>
+              <div className="mb-3">
+                <button type="submit" className="btn btn-primary w-100">
+                  Sign up!
+                </button>
+              </div>
 
-            {errors.error && <div className="text-danger">{errors.error}</div>}
-          </div>
+              {responceError && (
+                <div className="text-danger">{responceError}</div>
+              )}
+            </div>
+          </form>
         )}
       </div>
     </div>

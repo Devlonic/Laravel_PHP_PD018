@@ -1,6 +1,19 @@
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { http, removeToken } from "../../../services/tokenService";
+import { AuthUserActionType } from "../../auth/types";
 
 const DefaultHeader = () => {
+  const navigator = useNavigate();
+  const dispatch = useDispatch();
+
+  const onClickLogout = (e: any) => {
+    e.preventDefault();
+    removeToken();
+    dispatch({ type: AuthUserActionType.LOGOUT_USER });
+    navigator("/auth/login");
+  };
+
   return (
     <header>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -38,13 +51,13 @@ const DefaultHeader = () => {
                 Пошук
               </button>
             </form>
-            <Link
+            <button
               className="btn btn-outline-secondary"
               aria-current="page"
-              to="/auth/signout"
+              onClick={onClickLogout}
             >
               Sign out
-            </Link>
+            </button>
           </div>
         </div>
       </nav>

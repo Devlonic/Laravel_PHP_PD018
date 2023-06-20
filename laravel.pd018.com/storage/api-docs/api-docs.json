@@ -196,6 +196,19 @@
                 ]
             }
         },
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "operationId": "d9261f9d7c0fb3ad438f876fba448ef4",
+                "responses": {
+                    "200": {
+                        "description": "List Products."
+                    }
+                }
+            }
+        },
         "/api/auth/login": {
             "post": {
                 "tags": [

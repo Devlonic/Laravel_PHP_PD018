@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\ProductsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\CategoryController;
@@ -26,6 +27,10 @@ Route::group(['middleware'=>'api', 'prefix'=>'category'], function ($router) {
     Route::get("/{id}", [CategoryController::class, "edit"]);
     Route::delete("/{id}", [CategoryController::class, "destroy"]);
     Route::post("/{id}", [CategoryController::class, "update"]);
+});
+
+Route::group(['middleware'=>'api', 'prefix'=>'products'], function ($router) {
+    Route::get("/", [ProductsController::class, "index"]);
 });
 
 Route::group([

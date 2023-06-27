@@ -29,8 +29,9 @@ Route::group(['middleware'=>'api', 'prefix'=>'category'], function ($router) {
     Route::post("/{id}", [CategoryController::class, "update"]);
 });
 
-Route::group(['middleware'=>'api', 'prefix'=>'products'], function ($router) {
+Route::group(['middleware'=>'api', 'prefix'=>'product'], function ($router) {
     Route::get("/", [ProductsController::class, "index"]);
+    Route::post("/", [ProductsController::class, "store"]);
 });
 
 Route::group([

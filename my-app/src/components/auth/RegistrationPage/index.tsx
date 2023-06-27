@@ -40,7 +40,6 @@ const RegistrationPage = () => {
     email: yup.string().required("Enter email").email("Пошта вказана не вірно"),
     tel: yup.string().required("Enter phone number"), // todo add regex validation
     password: yup.string().required("Enter password"),
-    photo: yup.mixed().required("Select image"),
     password_confirmation: yup
       .string()
       .required("Repeat password")
@@ -64,7 +63,7 @@ const RegistrationPage = () => {
       navigator("../login");
       await setIsProcessing(false);
     } catch (e: any) {
-      setResponceError("Wrong login or password");
+      setResponceError(e);
       await setIsProcessing(false);
     }
   };
@@ -75,6 +74,10 @@ const RegistrationPage = () => {
   });
 
   const { values, errors, touched, handleSubmit, handleChange } = formik;
+
+  const onImageChange = (file: File) => {
+    values.photo = file;
+  };
 
   return (
     <div className="d-flex justify-content-center">
@@ -216,7 +219,7 @@ const RegistrationPage = () => {
               <div className="mb-3">
                 <label className="form-label">Photo</label>
                 <CropperDialog
-                  onSave={handleChange}
+                  onSave={onImageChange}
                   error={
                     errors.photo === undefined
                       ? ""

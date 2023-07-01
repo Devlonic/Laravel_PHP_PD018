@@ -23,6 +23,7 @@ function App() {
       <Routes>
         <Route path="/" element={<DefaultLayout />}>
           <Route index element={<HomePage />} />
+          <Route path="page/:page" element={<HomePage />} />
         </Route>
         <Route path="/auth" element={<AuthLayout />}>
           <Route index element={<LoginPage />}></Route>

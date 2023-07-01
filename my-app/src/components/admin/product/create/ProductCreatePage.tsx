@@ -180,6 +180,7 @@ const ProductCreatePage = () => {
             <label htmlFor="name" className="form-label">
               Категорія
             </label>
+            {/* todo fix initial selection */}
             <select
               onChange={handleChange}
               value={values.category_id}

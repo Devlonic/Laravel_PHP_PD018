@@ -32,6 +32,7 @@ Route::group(['middleware'=>'api', 'prefix'=>'category'], function ($router) {
 Route::group(['middleware'=>'api', 'prefix'=>'product'], function ($router) {
     Route::get("/", [ProductsController::class, "index"]);
     Route::post("/", [ProductsController::class, "store"]);
+    Route::post("/{id}/images", [ProductsController::class, "storeImages"]);
 });
 
 Route::group([

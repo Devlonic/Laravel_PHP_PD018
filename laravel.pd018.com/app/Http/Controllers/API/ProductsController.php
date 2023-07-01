@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Validator;
@@ -102,5 +103,83 @@ class ProductsController extends Controller
         }
         $product = Product::create($input);
         return response()->json($product);
+    }
+
+    /**
+     * @OA\Post(
+     *     security={{"bearerAuth":{}}},
+     *     tags={"Product"},
+     *     path="/api/product/{id}/images",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Product id to link images",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"images[]"},
+     *                 @OA\Property(
+     *                     property="images[]",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="string",
+     *                         format="binary"
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response="200", description="Success"),
+     *     @OA\Response(response="400", description="Validation has been fault"),
+     * )
+     */
+    public function storeImages(Request $request, string $id)
+    {
+        $input = $request->all();
+        $messages = array(
+            'images[].required'=>'You must upload at least 1 image',
+            'product_id.exists' => 'Product id does not exist',
+            'product_id.required'=>'Enter product id'
+        );
+        $validator = Validator::make($input, [
+            'images.*' => 'required|image|max:50000',
+        ], $messages);
+
+        if($validator->fails()){
+            return response()->json($validator->errors(), 400);
+        }
+
+        $validator = Validator::make(['product_id'=>$id], [
+            'product_id' => 'required|exists:products,id',
+        ], $messages);
+
+        if($validator->fails()){
+            return response()->json($validator->errors(), 400);
+        }
+
+        $files = $request->file('images');
+
+        if($files == null){
+            return response()->json("You must upload at least 1 image1", 400);
+        }
+
+        $priority = 0;
+        $res = [];
+        foreach ($files as $file) {
+            $path = Storage::disk('public')->putFile('uploads/products', $file); // store file at /public/storage/uploads/products
+
+            $res[] = ProductImage::create([
+                'product_id' => $id,
+                'name' => $path,
+                'priority' => $priority++,
+            ]);
+        }
+        return response()->json($res);
     }
 }

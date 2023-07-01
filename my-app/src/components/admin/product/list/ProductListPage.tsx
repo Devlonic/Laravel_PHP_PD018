@@ -95,13 +95,13 @@ const ProductListPage = () => {
       <td>
         <Link
           to={`/admin/product/edit/${product.id}`}
-          className="btn btn-primary m-1"
+          className="btn btn-primary m-1 disabled"
         >
           Edit
         </Link>
         <Link
           to={`/admin/product/delete/${product.id}`}
-          className="btn btn-danger m-1"
+          className="btn btn-danger m-1 disabled"
         >
           Delete
         </Link>

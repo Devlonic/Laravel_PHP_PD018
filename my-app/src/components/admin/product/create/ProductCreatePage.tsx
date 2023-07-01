@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { LegacyRef, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IProductCreate, IProductCreateError } from "./types";
 import ReactLoading from "react-loading";
@@ -9,15 +9,22 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import { AxiosError } from "axios";
 import { ICategoryGetResult, ICategoryItem } from "../../category/list/types";
+import { IProductItem } from "../list/types";
+import { config } from "process";
 const ProductCreatePage = () => {
   const navigator = useNavigate();
+  const fileSelectInputRef = useRef<HTMLInputElement>();
+
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [imageError, setImageError] = useState<string>();
   const [initValues, setInitValues] = useState<IProductCreate>({
     name: "",
     description: "",
     category_id: undefined,
     price: 0,
   });
+  const [images, setImages] = useState<File[]>([]);
+  const [imagesUrl, setImagesUrl] = useState<string[]>([]);
   const [categoriesPage, setCategoriesPage] = useState<number>(1);
   const [categories, setCategories] = useState<ICategoryItem[]>([]);
 
@@ -57,8 +64,24 @@ const ProductCreatePage = () => {
     try {
       await setIsProcessing(true);
       var resp = await http_common.post(`api/product`, values);
-      var respData = resp.data;
-      console.log("resp = ", respData);
+      var created = resp.data as IProductItem;
+      console.log("resp = ", created);
+
+      const formData = new FormData();
+      images.forEach((i) => {
+        formData.append("images[]", i);
+      });
+      var uploadImagesResult = await http_common.post(
+        `api/product/${created.id}/images`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("images upload result:", uploadImagesResult);
+
       navigator("..");
       await setIsProcessing(false);
     } catch (e: any) {
@@ -73,30 +96,65 @@ const ProductCreatePage = () => {
       await setIsProcessing(false);
     }
   };
-
   const formik = useFormik({
     initialValues: initValues,
     validationSchema: productCreateSchema,
     onSubmit: onSubmitFormikData,
   });
-
   const { values, errors, touched, handleSubmit, handleChange } = formik;
 
-  // const onImageChangeHandler = (f: File) => {
-  //   console.log("image input handle change", f);
-  //   if (f != null) {
-  //     onImageSaveHandler(f);
-  //   }
-  // };
-  // const onImageSaveHandler = (file: File) => {
-  //   console.log("image save handle", file);
-  //   setDto({ ...dto, image: file });
-  // };
+  // images
+  const onImageChangeHandler = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = e.target.files;
+    if (!files || !files.length) {
+      return;
+    }
 
+    const file = files[0];
+    if (!/^image\/\w+/.test(file.type)) {
+      setImageError("Select correct image!");
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setImages([...images, file]);
+    setImagesUrl([...imagesUrl, url]);
+    console.log("images:", images, imagesUrl);
+  };
+  const onAddImageClick = async () => {
+    await fileSelectInputRef.current?.click();
+  };
+  const removeImage = (index: number) => {
+    const updatedImages = [...images];
+    updatedImages.splice(index, 1);
+    setImages(updatedImages);
+
+    const updatedImagesUrl = [...imagesUrl];
+    updatedImagesUrl.splice(index, 1);
+    setImagesUrl(updatedImagesUrl);
+  };
+
+  // view data
   const categoriesData = categories?.map((l) => (
     <option value={l.id} key={Math.random()}>
       {l.name}
     </option>
+  ));
+  const imagesPreviewData = imagesUrl?.map((url, index) => (
+    <div className="img" key={url}>
+      <button
+        type="button"
+        className="btn-close position-relative z-index-100 top-0 start-100"
+        aria-label="Remove image"
+        title="Remove image"
+        onClick={() => removeImage(index)}
+      ></button>
+
+      <div className="card m-2" style={{ width: "14rem", height: "14rem" }}>
+        <img src={url} className="card-img-top" alt={"image"}></img>
+      </div>
+    </div>
   ));
 
   return (
@@ -177,7 +235,7 @@ const ProductCreatePage = () => {
             )}
           </div>
           <div className="mb-3">
-            <label htmlFor="name" className="form-label">
+            <label htmlFor="category_id" className="form-label">
               Категорія
             </label>
             <select
@@ -189,7 +247,7 @@ const ProductCreatePage = () => {
               className="form-select"
               aria-label="Default select example"
             >
-              <option disabled selected>
+              <option disabled={true} defaultChecked={true}>
                 Виберіть категорію...
               </option>
               {categoriesData}
@@ -197,6 +255,36 @@ const ProductCreatePage = () => {
             {errors.category_id && (
               <div className="invalid-feedback">{errors.category_id}</div>
             )}
+          </div>
+          <div className="mb-3">
+            <div className="form-control">
+              <label htmlFor="name" className="form-label">
+                Картинки
+              </label>
+              <button
+                type="button"
+                onClick={onAddImageClick}
+                className="btn btn-secondary"
+              >
+                Додати картинку
+              </button>
+              {/* hidden file input */}
+              <input
+                type="file"
+                accept="image/*"
+                className={classNames("form-control d-none")}
+                id="image"
+                name="image"
+                ref={fileSelectInputRef as LegacyRef<HTMLInputElement>}
+                onChange={onImageChangeHandler}
+              />
+              <div className="container">
+                <div className="d-flex flex-wrap">{imagesPreviewData}</div>
+              </div>
+              {imageError && (
+                <div className="invalid-feedback">{imageError}</div>
+              )}
+            </div>
           </div>
           <button type="submit" className="btn btn-primary">
             Додати

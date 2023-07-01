@@ -26,3 +26,7 @@ img {
 .cropper-wrapper {
   height: 25em;
 }
+
+.z-index-100 {
+  z-index: 100;
+}

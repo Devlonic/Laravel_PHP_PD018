@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\File;
 
 class ProductsController extends Controller
 {
+    public function __construct() {
+        $this->middleware('auth:api', ['except' => ['index']]);
+    }
+
     /**
      * @OA\Get(
      *     tags={"Product"},

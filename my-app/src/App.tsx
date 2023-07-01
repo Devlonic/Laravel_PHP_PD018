@@ -7,8 +7,7 @@ import RegistrationPage from "./components/auth/RegistrationPage";
 import SignOutPage from "./components/auth/SignOutPage";
 import AdminLayout from "./components/containers/admin/AdminLayout";
 import HomePage from "./components/home/HomePage";
-import CategoryIndexPage from "./components/admin/category/index/CategoryListPage";
-import CategoryListPage from "./components/admin/category/index/CategoryListPage";
+import CategoryListPage from "./components/admin/category/list/CategoryListPage";
 import CategoryCreatePage from "./components/admin/category/create/CategoryCreatePage";
 import CategoryEditPage from "./components/admin/category/edit/CategoryEditPage";
 import CategoryDeletePage from "./components/admin/category/delete/CategoryDeletePage";
@@ -19,7 +18,6 @@ function App() {
       <Routes>
         <Route path="/" element={<DefaultLayout />}>
           <Route index element={<HomePage />} />
-          <Route path="page/:page" element={<CategoryIndexPage />} />
         </Route>
         <Route path="/auth" element={<AuthLayout />}>
           <Route index element={<LoginPage />}></Route>

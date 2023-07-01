@@ -73,7 +73,7 @@ const CategoryEditPage = () => {
       })
       .then((resp) => {
         setIsLoading(false);
-        navigator("/");
+        navigator("../../..");
       })
       .catch((er: any) => {
         const errors = er.response.data as ICategoryEditErrror;

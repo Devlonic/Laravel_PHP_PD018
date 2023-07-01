@@ -14,7 +14,7 @@ export const getToken = () => {
 };
 
 export const removeToken = () => {
-  delete http_common.defaults.headers.common["Authorization"];
+  delete http_common.defaults.headers["Authorization"];
   return localStorage.removeItem("token");
 };
 

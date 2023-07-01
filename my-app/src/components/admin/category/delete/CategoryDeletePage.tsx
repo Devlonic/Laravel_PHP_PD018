@@ -26,7 +26,7 @@ const CategoryDeletePage = () => {
       .then((resp) => {
         console.log(resp);
         setIsProcessing(false);
-        navigator("../..");
+        navigator("../../..");
       })
       .catch((er) => {
         setIsProcessing(false);

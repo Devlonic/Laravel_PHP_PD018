@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ICategoryEdit, ICategoryEditErrror } from "./types";
-import { ICategoryItem } from "../list/types";
+import { IProductItem } from "../list/types";
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.min.css";
 import ReactLoading from "react-loading";
@@ -35,7 +35,7 @@ const ProductEditPage = () => {
   useEffect(() => {
     setIsLoading(true);
     http_common
-      .get<ICategoryItem>(`${APP_ENV.BASE_URL}api/category/${id}`)
+      .get<IProductItem>(`${APP_ENV.BASE_URL}api/category/${id}`)
       .then((resp: any) => {
         let initCategory = resp.data;
         console.log("Сервак дав 1 category", initCategory);

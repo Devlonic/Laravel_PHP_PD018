@@ -1,8 +1,11 @@
-export interface ICategoryItem {
+export interface IProductItem {
   id: number;
+  category_id: number;
   name: string;
-  image: string;
+  price: string;
   description: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ILinkUrl {
@@ -11,9 +14,9 @@ export interface ILinkUrl {
   active: boolean;
 }
 
-export interface ICategoryGetResult {
+export interface IProductGetResult {
   current_page: number;
-  data: ICategoryItem[];
+  data: IProductItem[];
   first_page_url: string;
   from: number;
   last_page: number;

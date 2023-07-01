@@ -1,23 +1,24 @@
 import { LegacyRef, useEffect, useRef, useState } from "react";
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
-import { ICategoryGetResult, ICategoryItem } from "./types";
+import { IProductGetResult, IProductItem } from "./types";
 import classNames from "classnames";
 import { randomUUID } from "crypto";
 import ReactLoading from "react-loading";
 import { APP_ENV } from "../../../../env";
 import { http_common } from "../../../../services/tokenService";
+import dayjs from "dayjs";
 
 const ProductListPage = () => {
   const deleteDialog = useRef();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [list, setList] = useState<ICategoryItem[]>([
+  const [list, setList] = useState<IProductItem[]>([
     // {
     //     id: 1,
     //     name: "SSD",
     //     description: "Для швикдих людей"
     // }
   ]);
-  const [data, setData] = useState<ICategoryGetResult>();
+  const [data, setData] = useState<IProductGetResult>();
 
   const { page } = useParams();
   let localpage;
@@ -30,8 +31,8 @@ const ProductListPage = () => {
     console.log("try to get categories from server page " + localpage);
     setIsLoading(true);
     http_common
-      .get<ICategoryGetResult>(
-        `${APP_ENV.BASE_URL}api/category?page=${localpage}`
+      .get<IProductGetResult>(
+        `${APP_ENV.BASE_URL}api/product?page=${localpage}`
       )
       .then((resp) => {
         setIsLoading(false);
@@ -40,7 +41,7 @@ const ProductListPage = () => {
         setData(resp.data);
       })
       .catch((e) => {
-        console.log("get categories from server error: ", e);
+        console.log("get products from server error: ", e);
         setIsLoading(false);
       });
 
@@ -72,23 +73,26 @@ const ProductListPage = () => {
     </li>
   ));
 
-  const viewData = list.map((category) => (
-    <tr key={category.id}>
-      <td>{category.id}</td>
-      <td>{category.name}</td>
-      <td>
+  const viewData = list.map((product) => (
+    <tr key={product.id}>
+      <td>{product.id}</td>
+      <td>{product.name}</td>
+      {/* <td>
         <img src={APP_ENV.BASE_URL + "/storage/" + category.image} width={50} />
-      </td>
-      <td>{category.description}</td>
+      </td> */}
+      <td>{product.description}</td>
+      <td>{product.price}</td>
+      <td>{dayjs(product.created_at).format("DD/MM/YYYY HH:mm:ss")}</td>
+      <td>{dayjs(product.updated_at).format("DD/MM/YYYY HH:mm:ss")}</td>
       <td>
         <Link
-          to={`/admin/category/edit/${category.id}`}
+          to={`/admin/product/edit/${product.id}`}
           className="btn btn-primary m-1"
         >
           Edit
         </Link>
         <Link
-          to={`/admin/category/delete/${category.id}`}
+          to={`/admin/product/delete/${product.id}`}
           className="btn btn-danger m-1"
         >
           Delete
@@ -122,7 +126,7 @@ const ProductListPage = () => {
 
       {!isLoading && (
         <div className="onLoad">
-          <Link to="/admin/category/create" className="btn btn-success">
+          <Link to="/admin/product/create" className="btn btn-success">
             Додати
           </Link>
           <table className="table">
@@ -130,8 +134,10 @@ const ProductListPage = () => {
               <tr>
                 <th scope="col">Id</th>
                 <th scope="col">Назва</th>
-                <th scope="col">Фото</th>
-                <th scope="col">Опис</th>
+                <th scope="col">Description</th>
+                <th scope="col">Price</th>
+                <th scope="col">Created at</th>
+                <th scope="col">Updated at</th>
                 <th scope="col"></th>
               </tr>
             </thead>

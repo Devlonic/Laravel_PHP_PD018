@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ICategoryItem } from "../list/types";
+import { IProductItem } from "../list/types";
 import { ICategoryDeleteErrror } from "./types";
 import ReactLoading from "react-loading";
 import { APP_ENV } from "../../../../env";

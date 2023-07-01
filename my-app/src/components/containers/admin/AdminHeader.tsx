@@ -1,67 +1,57 @@
-import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { http, removeToken } from "../../../services/tokenService";
-import { AuthUserActionType } from "../../auth/types";
+import { Link } from "react-router-dom";
 
 const AdminHeader = () => {
-  const navigator = useNavigate();
-  const dispatch = useDispatch();
-
-  const onClickLogout = (e: any) => {
-    e.preventDefault();
-    removeToken();
-    dispatch({ type: AuthUserActionType.LOGOUT_USER });
-    navigator("/auth/login");
-  };
-
   return (
-    <header>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-warning">
-        <div className="container">
-          <Link className="navbar-brand" to="/">
-            Товари
-          </Link>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <Link className="nav-link active" aria-current="page" to="/">
-                  Home
-                </Link>
-              </li>
-            </ul>
-            <form className="d-flex" role="search">
-              <input
-                className="form-control me-2"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-              />
-              <button className="btn btn-outline-success" type="submit">
-                Пошук
-              </button>
-            </form>
+    <>
+      <header data-bs-theme="dark">
+        <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+          <div className="container">
+            <Link className="navbar-brand" to="/">
+              Панель керування
+            </Link>
             <button
-              className="btn btn-outline-secondary"
-              aria-current="page"
-              onClick={onClickLogout}
+              className="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarCollapse"
+              aria-controls="navbarCollapse"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
             >
-              Sign out
+              <span className="navbar-toggler-icon"></span>
             </button>
+            <div className="collapse navbar-collapse" id="navbarCollapse">
+              <ul className="navbar-nav me-auto mb-2 mb-md-0">
+                <li className="nav-item">
+                  <a className="nav-link active" aria-current="page" href="/">
+                    Home
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#">
+                    Link
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link disabled">Disabled</a>
+                </li>
+              </ul>
+              <form className="d-flex" role="search">
+                <input
+                  className="form-control me-2"
+                  type="search"
+                  placeholder="Search"
+                  aria-label="Search"
+                />
+                <button className="btn btn-outline-success" type="submit">
+                  Search
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
-      </nav>
-    </header>
+        </nav>
+      </header>
+    </>
   );
 };
 

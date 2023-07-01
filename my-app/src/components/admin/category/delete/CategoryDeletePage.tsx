@@ -1,12 +1,12 @@
 import classNames from "classnames";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { APP_ENV } from "../../../env";
 import { ICategoryItem } from "../list/types";
 import { ICategoryDeleteErrror } from "./types";
-import DangerDialog from "../../common/DangerDialog";
 import ReactLoading from "react-loading";
-import { http } from "../../../services/tokenService";
+import { APP_ENV } from "../../../../env";
+import { http_common } from "../../../../services/tokenService";
+import DangerDialog from "../../../common/DangerDialog";
 
 const CategoryDeletePage = () => {
   const { id } = useParams();
@@ -21,7 +21,7 @@ const CategoryDeletePage = () => {
   };
   const onSubmitHandler = () => {
     setIsProcessing(true);
-    http
+    http_common
       .delete(`${APP_ENV.BASE_URL}api/category/${id}`)
       .then((resp) => {
         console.log(resp);

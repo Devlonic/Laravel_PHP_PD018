@@ -3,7 +3,11 @@ import { ChangeEvent, useEffect, useState } from "react";
 import ReactLoading from "react-loading";
 import { useNavigate } from "react-router-dom";
 import { APP_ENV } from "../../../env";
-import { http, isSignedIn, storeToken } from "../../../services/tokenService";
+import {
+  http_common,
+  isSignedIn,
+  storeToken,
+} from "../../../services/tokenService";
 import {
   IRegistrationRequest,
   IRegistrationRequestError,
@@ -53,7 +57,7 @@ const RegistrationPage = () => {
   const onSubmitFormikData = async (values: IRegistrationRequest) => {
     try {
       await setIsProcessing(true);
-      var resp = await http.post(`api/auth/register`, values, {
+      var resp = await http_common.post(`api/auth/register`, values, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

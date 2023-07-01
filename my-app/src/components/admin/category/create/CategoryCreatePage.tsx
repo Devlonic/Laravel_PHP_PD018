@@ -1,11 +1,11 @@
 import classNames from "classnames";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { APP_ENV } from "../../../env";
 import { ICategoryCreate, ICategoryCreateErrror } from "./types";
-import CropperDialog from "../../common/CropperDialog";
 import ReactLoading from "react-loading";
-import { http } from "../../../services/tokenService";
+import { APP_ENV } from "../../../../env";
+import { http_common } from "../../../../services/tokenService";
+import CropperDialog from "../../../common/CropperDialog";
 const CategoryCreatePage = () => {
   const navigator = useNavigate();
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -31,7 +31,7 @@ const CategoryCreatePage = () => {
 
     try {
       setIsProcessing(true);
-      await http.post(`${APP_ENV.BASE_URL}api/category`, dto, {
+      await http_common.post(`${APP_ENV.BASE_URL}api/category`, dto, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

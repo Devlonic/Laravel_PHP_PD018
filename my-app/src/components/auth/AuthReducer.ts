@@ -1,4 +1,4 @@
-import { IAuthUser } from "./types";
+import { AuthUserActionType, IAuthUser, IUser } from "./types";
 
 const initState: IAuthUser = {
   isAuth: false,
@@ -6,5 +6,19 @@ const initState: IAuthUser = {
 };
 
 export const AuthReducer = (state = initState, action: any): IAuthUser => {
+  switch (action.type) {
+    case AuthUserActionType.LOGIN_USER: {
+      const user = action.payload as IUser;
+      return {
+        isAuth: true,
+        user,
+      };
+    }
+    case AuthUserActionType.LOGOUT_USER: {
+      return {
+        isAuth: false,
+      };
+    }
+  }
   return state;
 };

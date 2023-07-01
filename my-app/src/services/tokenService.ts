@@ -4,8 +4,9 @@ import jwtDecode from "jwt-decode";
 import { APP_ENV } from "../env";
 
 export const storeToken = (token: string) => {
+  console.log("store token");
   localStorage.setItem("token", `Bearer ${token}`);
-  http.defaults.headers.common["Authorization"] = getToken();
+  http_common.defaults.headers["Authorization"] = getToken();
 };
 
 export const getToken = () => {
@@ -13,7 +14,7 @@ export const getToken = () => {
 };
 
 export const removeToken = () => {
-  delete http.defaults.headers.common["Authorization"];
+  delete http_common.defaults.headers.common["Authorization"];
   return localStorage.removeItem("token");
 };
 
@@ -28,7 +29,7 @@ export const isSignedIn = (): boolean => {
   return t != null && t != "" && t != undefined;
 };
 
-export var http = axios.create({
+export var http_common = axios.create({
   baseURL: APP_ENV.BASE_URL,
   headers: {
     Authorization: `Bearer ${getToken()}`,

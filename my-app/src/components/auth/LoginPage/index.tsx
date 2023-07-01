@@ -6,21 +6,23 @@ import { ILoginRequest, ILoginRequestError, ILoginResponce } from "./types";
 import { APP_ENV } from "../../../env";
 import {
   decodeToken,
-  http,
+  http_common,
   isSignedIn,
   storeToken,
 } from "../../../services/tokenService";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { AxiosError } from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AuthUserActionType, IAuthUser } from "../types";
 const LoginPage = () => {
   const navigator = useNavigate();
   const dispatch = useDispatch();
 
+  const { isAuth, user } = useSelector((store: any) => store.auth as IAuthUser);
+
   useEffect(() => {
-    if (isSignedIn() == true) {
+    if (isAuth == true) {
       navigator("/");
     }
   });
@@ -40,7 +42,7 @@ const LoginPage = () => {
   const onSubmitFormikData = async (values: ILoginRequest) => {
     try {
       await setIsProcessing(true);
-      var resp = await http.post(`api/auth/login`, values);
+      var resp = await http_common.post(`api/auth/login`, values);
       var respData = resp.data as ILoginResponce;
       console.log("resp = ", respData);
       storeToken(respData.access_token);
@@ -50,6 +52,7 @@ const LoginPage = () => {
         payload: user,
       });
       await setIsProcessing(false);
+      navigator("/");
     } catch (e: any) {
       setResponceError("Wrong login or password");
       await setIsProcessing(false);

@@ -1,14 +1,14 @@
 import classNames from "classnames";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { APP_ENV } from "../../../env";
 import { ICategoryEdit, ICategoryEditErrror } from "./types";
 import { ICategoryItem } from "../list/types";
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.min.css";
 import ReactLoading from "react-loading";
-import CropperDialog from "../../common/CropperDialog";
-import { http } from "../../../services/tokenService";
+import { APP_ENV } from "../../../../env";
+import { http_common } from "../../../../services/tokenService";
+import CropperDialog from "../../../common/CropperDialog";
 
 const CategoryEditPage = () => {
   const navigator = useNavigate();
@@ -34,7 +34,7 @@ const CategoryEditPage = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    http
+    http_common
       .get<ICategoryItem>(`${APP_ENV.BASE_URL}api/category/${id}`)
       .then((resp: any) => {
         let initCategory = resp.data;
@@ -65,7 +65,7 @@ const CategoryEditPage = () => {
     e.preventDefault();
     setIsLoading(true);
     setErrors({ name: "", description: "", image: "" });
-    http
+    http_common
       .post(`${APP_ENV.BASE_URL}api/category/${id}`, toSendCategory, {
         headers: {
           "Content-Type": "multipart/form-data",

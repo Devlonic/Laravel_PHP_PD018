@@ -1,16 +1,24 @@
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { http, removeToken } from "../../../services/tokenService";
-import { AuthUserActionType } from "../../auth/types";
+import { http_common, removeToken } from "../../../services/tokenService";
+import { AuthUserActionType, IAuthUser } from "../../auth/types";
+import { useSelector } from "react-redux";
 
 const DefaultHeader = () => {
   const navigator = useNavigate();
   const dispatch = useDispatch();
 
+  const { isAuth, user } = useSelector((store: any) => store.auth as IAuthUser);
+
   const onClickLogout = (e: any) => {
     e.preventDefault();
     removeToken();
     dispatch({ type: AuthUserActionType.LOGOUT_USER });
+    navigator("/auth/login");
+  };
+
+  const onClickLogin = (e: any) => {
+    e.preventDefault();
     navigator("/auth/login");
   };
 
@@ -51,13 +59,33 @@ const DefaultHeader = () => {
                 Пошук
               </button>
             </form>
-            <button
-              className="btn btn-outline-secondary"
-              aria-current="page"
-              onClick={onClickLogout}
-            >
-              Sign out
-            </button>
+            {isAuth && (
+              <>
+                <Link
+                  to={"/admin"}
+                  className="btn btn-outline-danger"
+                  aria-current="page"
+                >
+                  Admin
+                </Link>
+                <button
+                  className="btn btn-outline-secondary"
+                  aria-current="page"
+                  onClick={onClickLogout}
+                >
+                  Sign out from {user?.email}
+                </button>
+              </>
+            )}
+            {!isAuth && (
+              <button
+                className="btn btn-outline-secondary"
+                aria-current="page"
+                onClick={onClickLogin}
+              >
+                Sign in
+              </button>
+            )}
           </div>
         </div>
       </nav>

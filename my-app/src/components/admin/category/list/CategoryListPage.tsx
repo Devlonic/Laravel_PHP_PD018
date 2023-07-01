@@ -1,12 +1,11 @@
 import { LegacyRef, useEffect, useRef, useState } from "react";
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
-import { APP_ENV } from "../../../env";
 import { ICategoryGetResult, ICategoryItem } from "./types";
 import classNames from "classnames";
 import { randomUUID } from "crypto";
 import ReactLoading from "react-loading";
-import DangerDialog from "../../common/DangerDialog";
-import { http } from "../../../services/tokenService";
+import { APP_ENV } from "../../../../env";
+import { http_common } from "../../../../services/tokenService";
 
 const CategoryListPage = () => {
   const deleteDialog = useRef();
@@ -30,7 +29,7 @@ const CategoryListPage = () => {
 
     console.log("try to get categories from server page " + localpage);
     setIsLoading(true);
-    http
+    http_common
       .get<ICategoryGetResult>(
         `${APP_ENV.BASE_URL}api/category?page=${localpage}`
       )

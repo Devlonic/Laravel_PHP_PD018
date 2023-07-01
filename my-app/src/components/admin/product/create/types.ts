@@ -1,7 +1,7 @@
 import { SyntheticEvent } from "react";
 
 export interface IProductCreate {
-  category_id: number;
+  category_id: number | undefined;
   name: string;
   price: number;
   description: string;

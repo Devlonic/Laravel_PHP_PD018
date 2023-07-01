@@ -15,7 +15,7 @@ const ProductCreatePage = () => {
   const [initValues, setInitValues] = useState<IProductCreate>({
     name: "",
     description: "",
-    category_id: 0,
+    category_id: undefined,
     price: 0,
   });
   const [categoriesPage, setCategoriesPage] = useState<number>(1);
@@ -180,8 +180,8 @@ const ProductCreatePage = () => {
             <label htmlFor="name" className="form-label">
               Категорія
             </label>
-            {/* todo fix initial selection */}
             <select
+              required={true}
               onChange={handleChange}
               value={values.category_id}
               id="category_id"
@@ -189,6 +189,9 @@ const ProductCreatePage = () => {
               className="form-select"
               aria-label="Default select example"
             >
+              <option disabled selected>
+                Виберіть категорію...
+              </option>
               {categoriesData}
             </select>
             {errors.category_id && (

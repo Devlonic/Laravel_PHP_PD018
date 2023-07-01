@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IProductCreate, IProductCreateError } from "./types";
 import ReactLoading from "react-loading";
@@ -8,6 +8,7 @@ import { http_common } from "../../../../services/tokenService";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { AxiosError } from "axios";
+import { ICategoryGetResult, ICategoryItem } from "../../category/list/types";
 const ProductCreatePage = () => {
   const navigator = useNavigate();
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -17,6 +18,8 @@ const ProductCreatePage = () => {
     category_id: 0,
     price: 0,
   });
+  const [categoriesPage, setCategoriesPage] = useState<number>(1);
+  const [categories, setCategories] = useState<ICategoryItem[]>([]);
 
   const productCreateSchema = yup.object({
     name: yup.string().required("Enter name"),
@@ -24,6 +27,29 @@ const ProductCreatePage = () => {
     category_id: yup.number().required("Enter category"),
     price: yup.number().required("Enter price"),
   });
+
+  const loadMoreCategoriesAsync = async () => {
+    const result = await http_common.get<ICategoryGetResult[]>(
+      `${APP_ENV.BASE_URL}api/category?page=${categoriesPage}`
+    );
+    setCategories((prev) => [...prev, ...(result.data as any).data]);
+    setCategoriesPage(categoriesPage + 1);
+  };
+
+  useEffect(() => {
+    setIsProcessing(true);
+    const fetchData = async () => {
+      try {
+        console.log("create tedas");
+        await loadMoreCategoriesAsync();
+      } catch (error) {
+        setIsProcessing(false);
+        console.log("get categories list error: ", error);
+      }
+    };
+    fetchData();
+    setIsProcessing(false);
+  }, []);
 
   const [responceError, setResponceError] = useState<IProductCreateError>();
 
@@ -66,6 +92,12 @@ const ProductCreatePage = () => {
   //   console.log("image save handle", file);
   //   setDto({ ...dto, image: file });
   // };
+
+  const categoriesData = categories?.map((l) => (
+    <option value={l.id} key={Math.random()}>
+      {l.name}
+    </option>
+  ));
 
   return (
     <>
@@ -148,16 +180,16 @@ const ProductCreatePage = () => {
             <label htmlFor="name" className="form-label">
               Категорія
             </label>
-            <input
-              type="number"
-              className={classNames("form-control", {
-                "is-invalid": errors.category_id,
-              })}
+            <select
+              onChange={handleChange}
+              value={values.category_id}
               id="category_id"
               name="category_id"
-              value={values.category_id}
-              onChange={handleChange}
-            />
+              className="form-select"
+              aria-label="Default select example"
+            >
+              {categoriesData}
+            </select>
             {errors.category_id && (
               <div className="invalid-feedback">{errors.category_id}</div>
             )}

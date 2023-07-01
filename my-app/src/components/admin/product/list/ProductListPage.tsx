@@ -82,6 +82,7 @@ const ProductListPage = () => {
       </td> */}
       <td>{product.description}</td>
       <td>{product.price}</td>
+      <td>{product.category_id}</td>
       <td>{dayjs(product.created_at).format("DD/MM/YYYY HH:mm:ss")}</td>
       <td>{dayjs(product.updated_at).format("DD/MM/YYYY HH:mm:ss")}</td>
       <td>
@@ -136,6 +137,7 @@ const ProductListPage = () => {
                 <th scope="col">Назва</th>
                 <th scope="col">Description</th>
                 <th scope="col">Price</th>
+                <th scope="col">Category</th>
                 <th scope="col">Created at</th>
                 <th scope="col">Updated at</th>
                 <th scope="col"></th>

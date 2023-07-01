@@ -61,7 +61,7 @@ const ProductListPage = () => {
       <Link
         to={
           l.url
-            ? `/admin/category/page/${new URLSearchParams(
+            ? `/admin/product/page/${new URLSearchParams(
                 new URL(l.url as string).search
               ).get("page")}`
             : ""

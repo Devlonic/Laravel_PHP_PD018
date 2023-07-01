@@ -1,61 +1,71 @@
 import classNames from "classnames";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ICategoryCreate, ICategoryCreateErrror } from "./types";
+import { IProductCreate, IProductCreateError } from "./types";
 import ReactLoading from "react-loading";
 import { APP_ENV } from "../../../../env";
 import { http_common } from "../../../../services/tokenService";
-import CropperDialog from "../../../common/CropperDialog";
+import * as yup from "yup";
+import { useFormik } from "formik";
+import { AxiosError } from "axios";
 const ProductCreatePage = () => {
   const navigator = useNavigate();
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [dto, setDto] = useState<ICategoryCreate>({
+  const [initValues, setInitValues] = useState<IProductCreate>({
     name: "",
     description: "",
-    image: null,
+    category_id: 0,
+    price: 0,
   });
 
-  const [errors, setErrors] = useState<ICategoryCreateErrror>({
-    name: "",
-    description: "",
-    image: "",
+  const productCreateSchema = yup.object({
+    name: yup.string().required("Enter name"),
+    description: yup.string().required("Enter description"), // todo add regex validation
+    category_id: yup.number().required("Enter category"),
+    price: yup.number().required("Enter price"),
   });
 
-  const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setDto({ ...dto, [e.target.name]: e.target.value });
-  };
+  const [responceError, setResponceError] = useState<IProductCreateError>();
 
-  const onSubmitHandler = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrors({ name: "", description: "", image: "" });
-
+  const onSubmitFormikData = async (values: IProductCreate) => {
     try {
-      setIsProcessing(true);
-      await http_common.post(`${APP_ENV.BASE_URL}api/category`, dto, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      setIsProcessing(false);
-      navigator("../..");
-    } catch (er: any) {
-      setIsProcessing(false);
+      await setIsProcessing(true);
+      var resp = await http_common.post(`api/product`, values);
+      var respData = resp.data;
+      console.log("resp = ", respData);
+      navigator("..");
+      await setIsProcessing(false);
+    } catch (e: any) {
+      const axiosError = e as AxiosError;
+      const error = axiosError.response?.data as IProductCreateError;
+      console.log("product create server error", error);
+      setResponceError(error);
+      errors.category_id = error.category_id?.join(", ");
+      errors.description = error.description?.join(", ");
+      errors.name = error.name?.join(", ");
+      errors.price = error.price?.join(", ");
+      await setIsProcessing(false);
+    }
+  };
 
-      const errors = er.response.data as ICategoryCreateErrror;
-      setErrors(errors);
-      console.log("Server error ", errors);
-    }
-  };
-  const onImageChangeHandler = (f: File) => {
-    console.log("image input handle change", f);
-    if (f != null) {
-      onImageSaveHandler(f);
-    }
-  };
-  const onImageSaveHandler = (file: File) => {
-    console.log("image save handle", file);
-    setDto({ ...dto, image: file });
-  };
+  const formik = useFormik({
+    initialValues: initValues,
+    validationSchema: productCreateSchema,
+    onSubmit: onSubmitFormikData,
+  });
+
+  const { values, errors, touched, handleSubmit, handleChange } = formik;
+
+  // const onImageChangeHandler = (f: File) => {
+  //   console.log("image input handle change", f);
+  //   if (f != null) {
+  //     onImageSaveHandler(f);
+  //   }
+  // };
+  // const onImageSaveHandler = (file: File) => {
+  //   console.log("image save handle", file);
+  //   setDto({ ...dto, image: file });
+  // };
 
   return (
     <>
@@ -79,10 +89,10 @@ const ProductCreatePage = () => {
         </div>
       )}
       {!isProcessing && (
-        <form className="col-md-6 offset-md-3" onSubmit={onSubmitHandler}>
+        <form className="col-md-6 offset-md-3" onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="name" className="form-label">
-              Наза
+              Назва
             </label>
             <input
               type="text"
@@ -91,8 +101,8 @@ const ProductCreatePage = () => {
               })}
               id="name"
               name="name"
-              value={dto.name}
-              onChange={onChangeHandler}
+              value={values.name}
+              onChange={handleChange}
             />
             {errors.name && (
               <div className="invalid-feedback">{errors.name}</div>
@@ -109,22 +119,48 @@ const ProductCreatePage = () => {
                 "is-invalid": errors.description,
               })}
               name="description"
-              value={dto.description}
-              onChange={onChangeHandler}
+              value={values.description}
+              onChange={handleChange}
             />
             {errors.description && (
               <div className="invalid-feedback">{errors.description}</div>
             )}
           </div>
           <div className="mb-3">
-            <label htmlFor="image" className="form-label">
-              Image
+            <label htmlFor="price" className="form-label">
+              Ціна
             </label>
-
-            <CropperDialog
-              onSave={onImageChangeHandler}
-              error={errors.image}
-            ></CropperDialog>
+            <input
+              type="number"
+              className={classNames("form-control", {
+                "is-invalid": errors.price,
+              })}
+              id="price"
+              name="price"
+              value={values.price}
+              onChange={handleChange}
+            />
+            {errors.price && (
+              <div className="invalid-feedback">{errors.price}</div>
+            )}
+          </div>
+          <div className="mb-3">
+            <label htmlFor="name" className="form-label">
+              Категорія
+            </label>
+            <input
+              type="number"
+              className={classNames("form-control", {
+                "is-invalid": errors.category_id,
+              })}
+              id="category_id"
+              name="category_id"
+              value={values.category_id}
+              onChange={handleChange}
+            />
+            {errors.category_id && (
+              <div className="invalid-feedback">{errors.category_id}</div>
+            )}
           </div>
           <button type="submit" className="btn btn-primary">
             Додати

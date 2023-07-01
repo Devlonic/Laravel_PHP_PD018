@@ -1,13 +1,15 @@
 import { SyntheticEvent } from "react";
 
-export interface ICategoryCreate {
+export interface IProductCreate {
+  category_id: number;
   name: string;
-  image: File | null;
+  price: number;
   description: string;
 }
 
-export interface ICategoryCreateErrror {
-  name: string;
-  description: string;
-  image: string;
+export interface IProductCreateError {
+  category_id: string[];
+  name: string[];
+  price: string[];
+  description: string[];
 }

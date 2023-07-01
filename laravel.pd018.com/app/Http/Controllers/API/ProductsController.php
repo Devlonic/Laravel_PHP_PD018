@@ -45,7 +45,7 @@ class ProductsController extends Controller
      *     path="/api/product",
      *     @OA\RequestBody(
      *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
+     *             mediaType="application/json",
      *             @OA\Schema(
      *                 required={"category_id", "name", "description", "price"},
      *                 @OA\Property(
@@ -76,13 +76,13 @@ class ProductsController extends Controller
         $input = $request->all();
         $messages = array(
             'category_id.required' => 'Enter category id',
-            'category_id.exists' => 'Category id not exist',
+            'category_id.exists' => 'Category id does not exist',
             'name.required' => 'Вкажіть name of product!',
             'price.required' => 'Вкажіть price of product!',
             'description.required' => 'Вкажіть description of product!',
         );
         $validator = Validator::make($input, [
-            'category_id' => 'required|exists:products,id',
+            'category_id' => 'required|exists:categories,id',
             'name' => 'required',
             'price' => 'required',
             'description' => 'required',

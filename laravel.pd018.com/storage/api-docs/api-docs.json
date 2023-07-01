@@ -229,7 +229,7 @@
                 "operationId": "27fb7ac89a0871ac2ed42bad955feae6",
                 "requestBody": {
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "required": [
                                     "category_id",

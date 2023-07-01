@@ -10,7 +10,7 @@ import { APP_ENV } from "../../../../env";
 import { http_common } from "../../../../services/tokenService";
 import CropperDialog from "../../../common/CropperDialog";
 
-const CategoryEditPage = () => {
+const ProductEditPage = () => {
   const navigator = useNavigate();
 
   const { id } = useParams();
@@ -73,7 +73,7 @@ const CategoryEditPage = () => {
       })
       .then((resp) => {
         setIsLoading(false);
-        navigator("../..");
+        navigator("../../..");
       })
       .catch((er: any) => {
         const errors = er.response.data as ICategoryEditErrror;
@@ -97,7 +97,7 @@ const CategoryEditPage = () => {
   };
   return (
     <>
-      <h1 className="text-center">Edit категорію {id}</h1>
+      <h1 className="text-center">Редагування товару {id}</h1>
       {isLoading && (
         <div className="">
           <div className="row">
@@ -186,4 +186,4 @@ const CategoryEditPage = () => {
     </>
   );
 };
-export default CategoryEditPage;
+export default ProductEditPage;

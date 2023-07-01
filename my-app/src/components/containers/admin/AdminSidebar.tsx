@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const AdminSidebar = () => {
   return (
     <>
@@ -5,44 +7,59 @@ const AdminSidebar = () => {
         <div className="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
           <ul className="nav flex-column">
             <li className="nav-item">
-              <a
+              <Link
+                to={"/"}
                 className="nav-link d-flex align-items-center gap-2 active"
                 aria-current="page"
-                href="#"
               >
                 <i className={"bi bi-house-fill"}></i>
-                Dashboard
-              </a>
+                Main
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link d-flex align-items-center gap-2" href="#">
+              <Link
+                to={"./category"}
+                className="nav-link d-flex align-items-center gap-2"
+              >
                 <i className={"bi bi-file-earmark"}></i>
-                Orders
-              </a>
+                Categories
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link d-flex align-items-center gap-2" href="#">
+              <Link
+                to={"./product"}
+                className="nav-link d-flex align-items-center gap-2"
+              >
                 <i className={"bi bi-cart"}></i>
                 Products
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link d-flex align-items-center gap-2" href="#">
+              <Link
+                to={"/"}
+                className="nav-link d-flex align-items-center gap-2 disabled"
+              >
                 <i className={"bi bi-people"}></i>
                 Customers
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link d-flex align-items-center gap-2" href="#">
+              <Link
+                to={"/"}
+                className="nav-link d-flex align-items-center gap-2 disabled"
+              >
                 <i className={"bi bi-graph-up"}></i>
                 Reports
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link d-flex align-items-center gap-2" href="#">
+              <Link
+                to={"/"}
+                className="nav-link d-flex align-items-center gap-2 disabled"
+              >
                 <i className={"bi bi-puzzle"}></i>
                 Integrations
-              </a>
+              </Link>
             </li>
           </ul>
 
@@ -50,16 +67,22 @@ const AdminSidebar = () => {
 
           <ul className="nav flex-column mb-auto">
             <li className="nav-item">
-              <a className="nav-link d-flex align-items-center gap-2" href="#">
+              <Link
+                to={"/"}
+                className="nav-link d-flex align-items-center gap-2 disabled"
+              >
                 <i className={"bi bi-gear-wide-connected"}></i>
                 Settings
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link d-flex align-items-center gap-2" href="#">
+              <Link
+                to={"/auth/signout"}
+                className="nav-link d-flex align-items-center gap-2"
+              >
                 <i className={"bi bi-door-closed"}></i>
                 Sign out
-              </a>
+              </Link>
             </li>
           </ul>
         </div>

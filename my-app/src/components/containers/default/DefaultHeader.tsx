@@ -6,15 +6,12 @@ import { useSelector } from "react-redux";
 
 const DefaultHeader = () => {
   const navigator = useNavigate();
-  const dispatch = useDispatch();
 
   const { isAuth, user } = useSelector((store: any) => store.auth as IAuthUser);
 
   const onClickLogout = (e: any) => {
     e.preventDefault();
-    removeToken();
-    dispatch({ type: AuthUserActionType.LOGOUT_USER });
-    navigator("/auth/login");
+    navigator("/auth/signout");
   };
 
   const onClickLogin = (e: any) => {
@@ -55,7 +52,7 @@ const DefaultHeader = () => {
                 placeholder="Search"
                 aria-label="Search"
               />
-              <button className="btn btn-outline-success" type="submit">
+              <button className="btn btn-outline-success me-2" type="submit">
                 Пошук
               </button>
             </form>
@@ -63,18 +60,18 @@ const DefaultHeader = () => {
               <>
                 <Link
                   to={"/admin"}
-                  className="btn btn-outline-danger"
+                  className="btn btn-outline-danger  me-2"
                   aria-current="page"
                 >
                   Admin
                 </Link>
-                <button
-                  className="btn btn-outline-secondary"
+                <Link
+                  to={"/auth/signout"}
+                  className="btn btn-outline-secondary  me-2"
                   aria-current="page"
-                  onClick={onClickLogout}
                 >
                   Sign out from {user?.email}
-                </button>
+                </Link>
               </>
             )}
             {!isAuth && (

@@ -2,6 +2,8 @@ import axios from "axios";
 import jwt from "jsonwebtoken";
 import jwtDecode from "jwt-decode";
 import { APP_ENV } from "../env";
+import { useDispatch } from "react-redux";
+import { AuthUserActionType } from "../components/auth/types";
 
 export const storeToken = (token: string) => {
   console.log("store token");

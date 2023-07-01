@@ -76,12 +76,13 @@ class ProductsController extends Controller
         $input = $request->all();
         $messages = array(
             'category_id.required' => 'Enter category id',
+            'category_id.exists' => 'Category id not exist',
             'name.required' => 'Вкажіть name of product!',
             'price.required' => 'Вкажіть price of product!',
             'description.required' => 'Вкажіть description of product!',
         );
         $validator = Validator::make($input, [
-            'category_id' => 'required',
+            'category_id' => 'required|exists:products,id',
             'name' => 'required',
             'price' => 'required',
             'description' => 'required',

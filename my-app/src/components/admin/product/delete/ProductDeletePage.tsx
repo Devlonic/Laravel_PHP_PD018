@@ -8,7 +8,7 @@ import { APP_ENV } from "../../../../env";
 import { http_common } from "../../../../services/tokenService";
 import DangerDialog from "../../../common/DangerDialog";
 
-const CategoryDeletePage = () => {
+const ProductDeletePage = () => {
   const { id } = useParams();
   const navigator = useNavigate();
   const [errors, setErrors] = useState<ICategoryDeleteErrror>({
@@ -26,7 +26,7 @@ const CategoryDeletePage = () => {
       .then((resp) => {
         console.log(resp);
         setIsProcessing(false);
-        navigator("../..");
+        navigator("../../..");
       })
       .catch((er) => {
         setIsProcessing(false);
@@ -37,7 +37,7 @@ const CategoryDeletePage = () => {
   };
   return (
     <>
-      <h1 className="text-center">Deleting</h1>
+      <h1 className="text-center">Видалення товару</h1>
       {isProcessing && (
         <div className="">
           <div className="row">
@@ -64,4 +64,4 @@ const CategoryDeletePage = () => {
     </>
   );
 };
-export default CategoryDeletePage;
+export default ProductDeletePage;

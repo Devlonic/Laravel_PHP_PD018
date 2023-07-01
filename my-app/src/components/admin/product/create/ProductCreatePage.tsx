@@ -6,7 +6,7 @@ import ReactLoading from "react-loading";
 import { APP_ENV } from "../../../../env";
 import { http_common } from "../../../../services/tokenService";
 import CropperDialog from "../../../common/CropperDialog";
-const CategoryCreatePage = () => {
+const ProductCreatePage = () => {
   const navigator = useNavigate();
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [dto, setDto] = useState<ICategoryCreate>({
@@ -37,7 +37,7 @@ const CategoryCreatePage = () => {
         },
       });
       setIsProcessing(false);
-      navigator("..");
+      navigator("../..");
     } catch (er: any) {
       setIsProcessing(false);
 
@@ -59,7 +59,7 @@ const CategoryCreatePage = () => {
 
   return (
     <>
-      <h1 className="text-center">Створити категорію</h1>
+      <h1 className="text-center">Створити товар</h1>
       {isProcessing && (
         <div className="">
           <div className="row">
@@ -134,4 +134,4 @@ const CategoryCreatePage = () => {
     </>
   );
 };
-export default CategoryCreatePage;
+export default ProductCreatePage;

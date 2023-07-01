@@ -33,8 +33,18 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        $list = Product::paginate(2);
-        return response()->json($list,200);
+        $list = Product::with('category')->paginate(2);
+
+//        $transformedData = $list->map(function ($product) {
+//            $product['category'] = $product->category;
+//            unset($product['category_id']);
+//            unset($product->category['created_at']);
+//            unset($product->category['updated_at']);
+//            unset($product->category['description']);
+//            return $product;
+//        });
+
+        return response()->json($list, 200);
     }
 
 

@@ -1,6 +1,8 @@
+import { ICategoryItem } from "../../category/list/types";
+
 export interface IProductItem {
   id: number;
-  category_id: number;
+  category: ICategoryItem;
   name: string;
   price: number;
   description: string;

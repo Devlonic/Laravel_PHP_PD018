@@ -82,7 +82,14 @@ const ProductListPage = () => {
       </td> */}
       <td>{product.description}</td>
       <td>{product.price}</td>
-      <td>{product.category_id}</td>
+      <td>
+        <img
+          title={product.category?.name}
+          alt={product.category?.name}
+          src={APP_ENV.BASE_URL + "/storage/" + product.category.image}
+          width={50}
+        />
+      </td>
       <td>{dayjs(product.created_at).format("DD/MM/YYYY HH:mm:ss")}</td>
       <td>{dayjs(product.updated_at).format("DD/MM/YYYY HH:mm:ss")}</td>
       <td>

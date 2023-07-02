@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { ChangeEvent, useEffect, useState } from "react";
 import ReactLoading from "react-loading";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ILoginRequest, ILoginRequestError, ILoginResponce } from "./types";
 import { APP_ENV } from "../../../env";
 import {
@@ -15,16 +15,22 @@ import { useFormik } from "formik";
 import { AxiosError } from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthUserActionType, IAuthUser } from "../types";
+import queryString from "query-string";
+
 const LoginPage = () => {
   const navigator = useNavigate();
   const dispatch = useDispatch();
-
   const { isAuth, user } = useSelector((store: any) => store.auth as IAuthUser);
+
+  const location = useLocation();
+  const queryParams = queryString.parse(location.search);
+  const forwardTo = queryParams.forwardTo;
 
   useEffect(() => {
     if (isAuth == true) {
       navigator("/");
     }
+    console.log("params forwardto:", forwardTo);
   });
   const initValues: ILoginRequest = {
     email: "",
@@ -52,7 +58,16 @@ const LoginPage = () => {
         payload: user,
       });
       await setIsProcessing(false);
-      navigator("/");
+
+      if (forwardTo !== undefined && forwardTo !== null) {
+        if (typeof forwardTo === "string") {
+          navigator(forwardTo);
+        } else {
+          navigator("/");
+        }
+      } else {
+        navigator("/");
+      }
     } catch (e: any) {
       setResponceError("Wrong login or password");
       await setIsProcessing(false);

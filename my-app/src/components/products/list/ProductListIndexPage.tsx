@@ -89,16 +89,15 @@ const ProductListIndexPage = () => {
       >
         <div className="carousel-indicators">
           {product.images.map((i, index) => (
-            <>
-              <button
-                type="button"
-                data-bs-target={`#productImagesSlider-${product.id}`}
-                data-bs-slide-to={index}
-                className={classNames("", { active: index == 0 })}
-                aria-current={index == 0}
-                aria-label={`Slide ${index + 1}`}
-              ></button>
-            </>
+            <button
+              key={index}
+              type="button"
+              data-bs-target={`#productImagesSlider-${product.id}`}
+              data-bs-slide-to={index}
+              className={classNames("", { active: index == 0 })}
+              aria-current={index == 0}
+              aria-label={`Slide ${index + 1}`}
+            ></button>
           ))}
         </div>
         <div className="carousel-inner">

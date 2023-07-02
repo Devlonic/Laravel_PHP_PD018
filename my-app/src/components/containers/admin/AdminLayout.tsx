@@ -1,5 +1,5 @@
 import "./admin.scss";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import DefaultHeader from "./AdminHeader";
 import { useEffect } from "react";
 import { isSignedIn } from "../../../services/tokenService";
@@ -12,11 +12,14 @@ const AdminLayout = () => {
   const navigator = useNavigate();
 
   const { isAuth, user } = useSelector((store: any) => store.auth as IAuthUser);
+  const location = useLocation();
+  const currentRoute = location.pathname;
 
   useEffect(() => {
     console.log("DefaultLayout useEffect");
+    console.log("current route:", currentRoute);
     if (isAuth == false) {
-      navigator("/auth/login");
+      navigator(`/auth/login?forwardTo=${currentRoute}`);
     }
   }, []);
 

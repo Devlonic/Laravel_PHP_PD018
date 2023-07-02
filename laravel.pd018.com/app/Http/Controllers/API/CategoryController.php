@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\File;
 class CategoryController extends Controller
 {
     public function __construct() {
-        $this->middleware('auth:api', ['except' => ['index', 'edit']]);
+        $this->middleware('auth:api', ['except' => []]);
     }
 
     /**

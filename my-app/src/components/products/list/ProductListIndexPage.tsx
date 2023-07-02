@@ -77,12 +77,72 @@ const ProductListIndexPage = () => {
   ));
 
   const viewData = list.map((product) => (
-    <div className="card m-2" style={{ width: "18rem" }} key={product.id}>
-      <img
-        src={APP_ENV.BASE_URL + "/storage/" + product.category.image}
-        className="card-img-top"
-        alt={product.category.name}
-      ></img>
+    <div
+      className="card m-2"
+      style={{ width: "18rem", minHeight: "25rem" }}
+      key={product.id}
+    >
+      <div
+        id={`productImagesSlider-${product.id}`}
+        className="carousel slide card-img-top"
+        data-bs-ride="carousel"
+      >
+        <div className="carousel-indicators">
+          {product.images.map((i, index) => (
+            <>
+              <button
+                type="button"
+                data-bs-target={`#productImagesSlider-${product.id}`}
+                data-bs-slide-to={index}
+                className={classNames("", { active: index == 0 })}
+                aria-current={index == 0}
+                aria-label={`Slide ${index + 1}`}
+              ></button>
+            </>
+          ))}
+        </div>
+        <div className="carousel-inner">
+          {product.images.map((i) => (
+            <div
+              className={classNames("carousel-item", {
+                active: i.priority == 0,
+              })}
+              key={Math.random()}
+            >
+              <img
+                src={APP_ENV.BASE_URL + "/storage/" + i.name}
+                className="d-block w-100"
+                alt="..."
+              ></img>
+            </div>
+          ))}
+        </div>
+        <button
+          className="carousel-control-prev"
+          type="button"
+          data-bs-target={`#productImagesSlider-${product.id}`}
+          data-bs-slide="prev"
+        >
+          <span
+            className="carousel-control-prev-icon"
+            aria-hidden="true"
+          ></span>
+          <span className="visually-hidden">Previous</span>
+        </button>
+        <button
+          className="carousel-control-next"
+          type="button"
+          data-bs-target={`#productImagesSlider-${product.id}`}
+          data-bs-slide="next"
+        >
+          <span
+            className="carousel-control-next-icon"
+            aria-hidden="true"
+          ></span>
+          <span className="visually-hidden">Next</span>
+        </button>
+      </div>
+
       <div className="card-body">
         <h5 className="card-title">{product.name}</h5>
         <h6 className="card-subtitle mb-2 text-muted">
@@ -97,7 +157,6 @@ const ProductListIndexPage = () => {
       </Link>
     </div>
   ));
-  //console.error("Сало");
 
   return (
     <>

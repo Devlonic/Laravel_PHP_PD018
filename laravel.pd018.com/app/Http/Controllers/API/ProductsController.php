@@ -38,7 +38,7 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        $list = Product::with('category')->paginate(2);
+        $list = Product::with('category')->with("images")->paginate(2);
 
 //        $transformedData = $list->map(function ($product) {
 //            $product['category'] = $product->category;

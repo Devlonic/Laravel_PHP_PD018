@@ -1,8 +1,14 @@
 import { ICategoryItem } from "../../category/list/types";
 
+export interface IProductImageItem {
+  name: string;
+  priority: number;
+}
+
 export interface IProductItem {
   id: number;
   category: ICategoryItem;
+  images: IProductImageItem[];
   name: string;
   price: number;
   description: string;

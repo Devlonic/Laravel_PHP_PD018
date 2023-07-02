@@ -12,7 +12,6 @@ import { store } from "./store";
 import jwtDecode from "jwt-decode";
 import { AuthUserActionType, IUser } from "./components/auth/types";
 import { http_common } from "./services/tokenService";
-import { createBrowserHistory } from "history";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );

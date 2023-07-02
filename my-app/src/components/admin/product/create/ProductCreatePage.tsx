@@ -48,6 +48,7 @@ const ProductCreatePage = () => {
     const fetchData = async () => {
       try {
         console.log("create tedas");
+
         await loadMoreCategoriesAsync();
       } catch (error) {
         setIsProcessing(false);
@@ -238,6 +239,15 @@ const ProductCreatePage = () => {
             <label htmlFor="category_id" className="form-label">
               Категорія
             </label>
+            <button
+              type="button"
+              onClick={async () => {
+                await loadMoreCategoriesAsync();
+              }}
+              className="btn btn-secondary"
+            >
+              Загрузити більше категорій
+            </button>
             <select
               required={true}
               onChange={handleChange}
@@ -286,7 +296,7 @@ const ProductCreatePage = () => {
               )}
             </div>
           </div>
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-success">
             Додати
           </button>
         </form>
